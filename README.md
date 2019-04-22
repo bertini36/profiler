@@ -22,7 +22,7 @@ timelines.
 
 ``touch .env``
 
-# Possible current commands
+# Possible commands
 
 ``python profiler.py download_tweets --users Albert_Rivera,sanchezcastejon``
 
