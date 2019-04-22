@@ -18,15 +18,12 @@ class Profiler:
     def download_tweets(self, users='Pablo_Iglesias_,pablocasado_', save=True):
         try:
             t_downloader = TweetsDownloader(MongoBackend())
-            processes = [
+            for user in users:
                 mp.Process(
                     target=t_downloader.download_timeline,
                     args=(user,),
                     kwargs={'save': save},
-                ) for user in users
-            ]
-            for p in processes:
-                p.start()
+                ).start()
         except Exception as e:
             logger.error(e)
 
