@@ -58,7 +58,7 @@ class MongoBackend(Backend):
             else:
                 logger.warning(
                     'Database already exists, set '
-                    'USE_EXISTING_DATABASE if you want to use it'
+                    'USE_EXISTING_DATABASE=True if you want to use it'
                 )
                 raise DatabaseDoesNotExist()
         else:

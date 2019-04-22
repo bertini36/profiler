@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+import multiprocessing as mp
+
 import fire
 from loguru import logger
 
@@ -16,8 +18,15 @@ class Profiler:
     def download_tweets(self, users='Pablo_Iglesias_,pablocasado_', save=True):
         try:
             t_downloader = TweetsDownloader(MongoBackend())
-            for user in users:
-                t_downloader.download_timeline(user, save=save)
+            processes = [
+                mp.Process(
+                    target=t_downloader.download_timeline,
+                    args=(user,),
+                    kwargs={'save': save},
+                ) for user in users
+            ]
+            for p in processes:
+                p.start()
         except Exception as e:
             logger.error(e)
 
