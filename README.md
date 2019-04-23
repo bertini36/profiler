@@ -24,7 +24,7 @@ timelines.
 
 # Possible commands
 
-``python profiler.py download_tweets --users Albert_Rivera,sanchezcastejon``
+``python profiler.py get_timelines --users Albert_Rivera,sanchezcastejon``
 
 # Next work
 

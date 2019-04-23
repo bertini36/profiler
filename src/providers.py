@@ -1,25 +1,42 @@
 # -*- coding: UTF-8 -*-
 
 import time
+from abc import ABC, abstractmethod, abstractproperty
 
 import tweepy
 from loguru import logger
 
-from settings import (
-    TWITTER_PUBLIC_KEY, TWITTER_SECRET_KEY,
-    TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET
-)
+
+class Provider(ABC):
+
+    def __repr__(self):
+        return self.name
+
+    @abstractproperty
+    def name(self) -> str:
+        pass
+
+    @abstractmethod
+    def connect(self):
+        pass
+
+    @abstractmethod
+    def download_timeline(self, username: str, limit=None):
+        pass
 
 
-class TweetsDownloader:
+class TweepyProvider(Provider):
 
-    def __init__(self, storage_backend):
-        self._public_key = TWITTER_PUBLIC_KEY
-        self._secret_key = TWITTER_SECRET_KEY
-        self._access_token = TWITTER_ACCESS_TOKEN
-        self._access_token_secret = TWITTER_ACCESS_TOKEN_SECRET
-        self._storage_backend = storage_backend
+    def __init__(self, public_key, secret_key, access_token, secret_token):
+        self._public_key = public_key
+        self._secret_key = secret_key
+        self._access_token = access_token
+        self._access_token_secret = secret_token
         self.api = self.connect()
+
+    @property
+    def name(self):
+        return 'Tweepy provider'
 
     @logger.catch
     def connect(self) -> tweepy.API:
@@ -27,19 +44,10 @@ class TweetsDownloader:
         auth.set_access_token(self._access_token, self._access_token_secret)
         return tweepy.API(auth)
 
-    def save_timeline(self, timeline: dict):
-        user_doc = self._storage_backend.get_timeline(timeline['user'])
-        if user_doc:
-            logger.info(f'Timeline already saved in {self._storage_backend}')
-            self._storage_backend.delete_timeline(timeline['user'])
-        self._storage_backend.save_timeline(timeline)
-        self._storage_backend.disconnect()
-
-    def download_timeline(self, username: str, limit=None, save=False) -> dict:
+    def download_timeline(self, username: str, limit=None) -> dict:
         """
         Download user tweets ignoring retweets
         :param username: Twitter username
-        :param save: If True timeline will be saved in backend storage
         :param limit: Number of tweets to download
         """
         screen_name = f'@{username}' if '@' not in username else username
@@ -66,6 +74,4 @@ class TweetsDownloader:
                 continue
             except StopIteration:
                 break
-        if save:
-            self.save_timeline(timeline)
         return timeline
