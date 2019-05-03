@@ -12,23 +12,10 @@ trim_trailing_whitespace=true
 
 [*.py]
 max_line_length=80
-quote_type=single
-not_skip=__init__.py
-multi_line_output=5
-known_django=django
-known_first_party=blog.blog
-default_section=THIRDPARTY
-sections=FUTURE,STDLIB,THIRDPARTY,DJANGO,FIRSTPARTY,LOCALFOLDER
 
 [*.{html,css,scss,json,yml}]
 max_line_length=120
-indent_style = space
-quote_type=double
-
-[*.js]
-max_line_length=120
-quote_type=double
 
 [*.{md, rst}]
-max_line_length=80
+max_line_length=120
 trim_trailing_whitespace=false

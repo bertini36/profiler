@@ -4,13 +4,13 @@ timelines.
 
 # Development environment
 
+# Development environment
+
 **1. System requirements**
 
-- Install Python and virtualenv
+- Install Docker and Docker compose
 
-- Install requirements
-    
-``pip install -r requirements.txt``
+- Install Git
 
 **2. Download code**
 
@@ -18,13 +18,23 @@ timelines.
 
 **3. Set project variables**
 
-- Create .env file and set variables as in .env-sample
+- Create .env file
 
-``touch .env``
+- Set environmental variables in .env using .env-sample model
+
+**4. Create Docker containers**
+
+- Generate image
+
+``make build``
+
+- Run mongo
+
+``make runmongo``
 
 # Possible commands
 
-``python profiler.py get_timelines --users Albert_Rivera,sanchezcastejon``
+``make gettimelines timelines=Albert_Rivera,sanchezcastejon,Pablo_Iglesias_,pablocasado_``
 
 # Next work
 

@@ -1,0 +1,27 @@
+version: "3"
+services:
+
+  profiler:
+    build:
+      context: .
+      args:
+        REQUIREMENTS: requirements.txt
+    env_file: .env
+    volumes:
+      - ".:/code"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    env_file: .env
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - "/opt/profiler/data/db:/data/db"
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles
+

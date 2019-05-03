@@ -7,7 +7,7 @@ environ.Env.read_env('.env')
 
 # MONGO
 # ******************************************************************************
-MONGO_URL = env('MONGO_URL', default='localhost')
+MONGO_URL = env('MONGO_URL', default='mongodb')
 MONGO_PORT = env.int('MONGO_PORT', default=27017)
 MONGO_DB = env('MONGO_DB', default='profiler_db')
 USE_EXISTING_DATABASE = env.bool('USE_EXISTING_DATABASE', False)
