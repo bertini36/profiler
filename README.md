@@ -28,9 +28,13 @@ timelines.
 
 ``make build``
 
-- Run mongo
+- Run
 
-``make runmongo``
+``make up``
+
+**5. Utilities**
+
+``make mongoshell``
 
 # Possible commands
 

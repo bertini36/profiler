@@ -5,11 +5,17 @@ PROFILER = $(DRUN) --entrypoint python profiler profiler.py
 build:
 	$(DOCKER_COMPOSE) build
 
+up:
+	$(DOCKER_COMPOSE) up
+
+down:
+	$(DOCKER_COMPOSE) down
+
 runmongo:
 	$(DRUN) mongodb
 
-shell:
-	$(DOCKER_COMPOSE) exec profiler bash
+mongoshell:
+	$(DOCKER_COMPOSE) exec mongodb mongo
 
 gettimelines:
 	$(PROFILER) get_timelines $(timelines)

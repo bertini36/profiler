@@ -14,6 +14,7 @@ services:
 
   mongodb:
     image: mongo:latest
+    restart: always
     container_name: "mongodb"
     env_file: .env
     environment:
