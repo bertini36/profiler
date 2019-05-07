@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-
 from loguru import logger
 
 
@@ -11,9 +10,11 @@ class TweetsDownloader:
         self._storage_backend = storage_backend
 
     def save_timeline(self, timeline: dict):
-        user_doc = self._storage_backend.get_timeline(timeline['user'])
-        if user_doc:
-            logger.info(f'Timeline already saved in {self._storage_backend}')
+        timeline = self._storage_backend.get_timeline(timeline['user'])
+        if timeline:
+            logger.info(
+                f'Timeline already saved in {self._storage_backend}. Updating'
+            )
             self._storage_backend.delete_timeline(timeline['user'])
         self._storage_backend.save_timeline(timeline)
         self._storage_backend.disconnect()

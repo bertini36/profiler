@@ -56,11 +56,10 @@ class MongoBackend(Backend):
             if USE_EXISTING_DATABASE:
                 logger.info('Database already exists and it will be used')
             else:
-                logger.warning(
-                    'Database already exists, set '
-                    'USE_EXISTING_DATABASE=True if you want to use it'
+                raise DatabaseDoesNotExist(
+                    'Database already exists, set USE_EXISTING'
+                    '_DATABASE=True if you want to use it'
                 )
-                raise DatabaseDoesNotExist()
         else:
             logger.info('Database doesn\'t exist, it will be created')
         return self.client[MONGO_DB]

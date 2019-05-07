@@ -4,3 +4,5 @@ pymongo==3.7.2
 tweepy==3.7.0
 django-environ==0.4.5
 pylint==2.3.1
+numpy==1.16.3
+pandas==0.24.2

@@ -3,3 +3,7 @@
 
 class DatabaseDoesNotExist(Exception):
     pass
+
+
+class TimelineDoesNotExist(Exception):
+    pass

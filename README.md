@@ -1,6 +1,5 @@
 # profiler
-The purpose of this project is to identify main topics in personal twitter 
-timelines.
+profiler purpose is to identify main topics in personal twitter timelines.
 
 # Development environment
 
@@ -43,5 +42,7 @@ timelines.
 # Next work
 
 - Preprocessing textual data
+- Make providers and backends async
 - Find main topics of an user using Latent Dirichlet Allocation algorithm
 - Show results using pyLDAvis
+- Postgres backend with SQLAlchemist
