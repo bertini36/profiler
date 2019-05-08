@@ -10,13 +10,13 @@ class TweetsDownloader:
         self._storage_backend = storage_backend
 
     def save_timeline(self, timeline: dict):
-        timeline = self._storage_backend.get_timeline(timeline['user'])
-        if timeline:
+        user = timeline['user']
+        if self._storage_backend.exists_timeline(user):
             logger.info(
-                f'Timeline already saved in {self._storage_backend}. Updating'
+                f'Timeline already saved in {self._storage_backend}'
             )
-            self._storage_backend.delete_timeline(timeline['user'])
-        self._storage_backend.save_timeline(timeline)
+            self._storage_backend.update_timeline(user, timeline)
+        self._storage_backend.insert_timeline(timeline)
         self._storage_backend.disconnect()
 
     def get_timeline(self, username: str, limit=None, save=False):

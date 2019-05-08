@@ -19,3 +19,6 @@ mongoshell:
 
 gettimelines:
 	$(PROFILER) get_timelines $(timelines)
+
+cleantimelines:
+	$(PROFILER) clean_timelines $(timelines)

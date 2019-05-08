@@ -42,7 +42,7 @@ profiler purpose is to identify main topics in personal twitter timelines.
 # Next work
 
 - Preprocessing textual data
-- Make providers and backends async
 - Find main topics of an user using Latent Dirichlet Allocation algorithm
 - Show results using pyLDAvis
 - Postgres backend with SQLAlchemist
+- Make async providers and backends to work with asyncio
