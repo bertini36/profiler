@@ -18,10 +18,11 @@ from src.tweets_downloader import TweetsDownloader
 
 class Profiler:
 
-    def get_timelines(self, users='Pablo_Iglesias_,pablocasado_', save=True):
+    @staticmethod
+    def get_timelines(users='vidamoderna,', save=True):
         """
         Exec:
-        python profiler.py get_timelines --users Albert_Rivera,sanchezcastejon
+        python profiler.py get_timelines --users vidamoderna,
         """
         try:
             t_downloader = TweetsDownloader(
@@ -47,10 +48,11 @@ class Profiler:
         except Exception as e:
             logger.error(e)
 
-    def clean_timelines(self, users='Pablo_Iglesias_,pablocasado_', save=True):
+    @staticmethod
+    def clean_timelines(users='vidamoderna,', save=True):
         """
         Exec:
-        python profiler.py clean_timelines --users Albert_Rivera,sanchezcastejon
+        python profiler.py clean_timelines --users vidamoderna,
         """
         try:
             preprocessor = Preprocessor(
