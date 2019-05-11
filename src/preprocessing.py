@@ -35,7 +35,7 @@ CURRENCY_REGEX = re.compile(
 PUNCTUATION = list(string.punctuation) + ['?', '¿', '¡', '!']
 PUNCTUATION.remove('<')
 PUNCTUATION.remove('>')
-PUNCT_REGEX = re.compile(
+PUNCTUATION_REGEX = re.compile(
     f'({"|".join(re.escape(p) for p in PUNCTUATION)})'
 )
 
@@ -121,29 +121,49 @@ class Preprocessor:
         return cleaned_timeline
 
     @staticmethod
-    def clean_timeline(timeline: dict) -> dict:
+    def clean_timeline(
+        timeline: dict, replace_mentions: bool = True,
+        replace_emails: bool = True, replace_currencies: bool = True,
+        replace_urls: bool = True, replace_phone_numbers: bool = True,
+        replace_numbers: bool = True, replace_digits: bool = True,
+        replace_emojis: bool = True, remove_punct: bool = True,
+        remove_multiple_spaces: bool = True, to_lower: bool = True,
+        filter_empty_rows: bool = True
+    ) -> dict:
         """
         This function will do all text
         transformations for each tweet in timeline
         """
         df = pd.DataFrame(timeline['tweets'], columns=['created_at', 'text'])
         logger.info(f'Preprocessing {df.shape[0]} tweets of {timeline["user"]}')
-        df['text'] = df['text'].apply(Preprocessor.replace_mentions)
-        df['text'] = df['text'].apply(Preprocessor.replace_emails)
-        df['text'] = df['text'].apply(Preprocessor.replace_currency_symbols)
-        df['text'] = df['text'].apply(Preprocessor.replace_urls)
-        df['text'] = df['text'].apply(Preprocessor.replace_phone_numbers)
-        df['text'] = df['text'].apply(Preprocessor.replace_numbers)
-        df['text'] = df['text'].apply(Preprocessor.replace_digits)
-        df['text'] = df['text'].apply(Preprocessor.replace_emojis)
-        df['text'] = df['text'].apply(Preprocessor.remove_punct)
-        df['text'] = df['text'].apply(Preprocessor.remove_multiple_spaces)
-        df['text'] = df['text'].apply(lambda text: text.lower())
-        mask = df.apply(Preprocessor.filter_empty_rows, axis=1)
-        df = df[mask]
-        logger.info(
-            f'There are {df.shape[0]} not null tweets of {timeline["user"]}'
-        )
+        if replace_mentions:
+            df['text'] = df['text'].apply(Preprocessor.replace_mentions)
+        if replace_emails:
+            df['text'] = df['text'].apply(Preprocessor.replace_emails)
+        if replace_currencies:
+            df['text'] = df['text'].apply(Preprocessor.replace_currencies)
+        if replace_urls:
+            df['text'] = df['text'].apply(Preprocessor.replace_urls)
+        if replace_phone_numbers:
+            df['text'] = df['text'].apply(Preprocessor.replace_phone_numbers)
+        if replace_numbers:
+            df['text'] = df['text'].apply(Preprocessor.replace_numbers)
+        if replace_digits:
+            df['text'] = df['text'].apply(Preprocessor.replace_digits)
+        if replace_emojis:
+            df['text'] = df['text'].apply(Preprocessor.replace_emojis)
+        if remove_punct:
+            df['text'] = df['text'].apply(Preprocessor.remove_punct)
+        if remove_multiple_spaces:
+            df['text'] = df['text'].apply(Preprocessor.remove_multiple_spaces)
+        if to_lower:
+            df['text'] = df['text'].apply(lambda text: text.lower())
+        if filter_empty_rows:
+            mask = df.apply(Preprocessor.filter_empty_rows, axis=1)
+            df = df[mask]
+            logger.info(
+                f'There are {df.shape[0]} not null tweets of {timeline["user"]}'
+            )
         return {
             'user': timeline['user'],
             'tweets': timeline['tweets'],
@@ -219,7 +239,7 @@ class Preprocessor:
         return re.sub(r'\d', replace_with, text)
 
     @staticmethod
-    def replace_currency_symbols(text: str, replace_with: str = '<CUR>') -> str:
+    def replace_currencies(text: str, replace_with: str = '<CUR>') -> str:
         """
         Replace all currency symbols in ``text`` str with
         string specified by ``replace_with`` str.
@@ -256,7 +276,7 @@ class Preprocessor:
         Returns:
             str
         """
-        return PUNCT_REGEX.sub(' ', text)
+        return PUNCTUATION_REGEX.sub(' ', text)
 
     @staticmethod
     def remove_multiple_spaces(text: str) -> str:
