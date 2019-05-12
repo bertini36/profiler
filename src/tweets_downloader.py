@@ -3,7 +3,7 @@
 from loguru import logger
 
 
-class TweetsDownloader:
+class TimelineDownloader:
 
     def __init__(self, provider, storage_backend):
         self._provider = provider
@@ -11,13 +11,14 @@ class TweetsDownloader:
 
     def save_timeline(self, timeline: dict):
         user = timeline['user']
-        if self._storage_backend.exists_timeline(user):
-            logger.info(
-                f'Timeline already saved in {self._storage_backend}'
-            )
-            self._storage_backend.update_timeline(user, timeline)
-        self._storage_backend.insert_timeline(timeline)
-        self._storage_backend.disconnect()
+        with self._storage_backend as backend:
+            if backend.exists_timeline(user):
+                logger.info(
+                    f'Timeline already saved in {backend}'
+                )
+                backend.update_timeline(user, timeline)
+            else:
+                backend.insert_timeline(timeline)
 
     def get_timeline(self, username: str, limit=None, save=False):
         """
@@ -27,6 +28,7 @@ class TweetsDownloader:
         :param save: If True timeline will be saved in backend storage
         """
         logger.info(f'Downloading tweets using {self._provider}')
-        timeline = self._provider.download_timeline(username, limit)
-        if save:
-            self.save_timeline(timeline)
+        with self._provider as provider:
+            timeline = provider.download_timeline(username, limit)
+            if save:
+                self.save_timeline(timeline)

@@ -7,3 +7,7 @@ class DatabaseDoesNotExist(Exception):
 
 class TimelineDoesNotExist(Exception):
     pass
+
+
+class UserDoesNotExist(Exception):
+    pass

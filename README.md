@@ -32,5 +32,6 @@ Profiler.clean_timelines(users='Pablo_Iglesias_,pablocasado_')
 - Preprocessing textual data
 - Find main topics of an user using Latent Dirichlet Allocation algorithm
 - Show results using pyLDAvis
+- Make tests
 - Postgres backend with SQLAlchemist
 - Make async providers and backends to work with asyncio

@@ -6,6 +6,8 @@ from abc import ABC, abstractmethod, abstractproperty
 import tweepy
 from loguru import logger
 
+from .exceptions import UserDoesNotExist
+
 
 class Provider(ABC):
 
@@ -17,7 +19,11 @@ class Provider(ABC):
         pass
 
     @abstractmethod
-    def connect(self):
+    def __enter__(self):
+        pass
+
+    @abstractmethod
+    def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
     @abstractmethod
@@ -32,17 +38,20 @@ class TweepyProvider(Provider):
         self._secret_key = secret_key
         self._access_token = access_token
         self._access_token_secret = secret_token
-        self.api = self.connect()
 
     @property
     def name(self):
         return 'Tweepy provider'
 
     @logger.catch
-    def connect(self) -> tweepy.API:
+    def __enter__(self):
         auth = tweepy.OAuthHandler(self._public_key, self._secret_key)
         auth.set_access_token(self._access_token, self._access_token_secret)
-        return tweepy.API(auth)
+        self.api = tweepy.API(auth)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
 
     def download_timeline(self, username: str, limit=None) -> dict:
         """
@@ -58,16 +67,24 @@ class TweepyProvider(Provider):
             screen_name=screen_name,
             tweet_mode='extended'
         ).items()
+        try:
+            tweet = cursor.next()
+        except tweepy.TweepError:
+            raise UserDoesNotExist(
+                f'User {username} does not exist '
+                f'or it has not registered tweets'
+            )
         while True:
             try:
-                tweet = cursor.next()
                 if not tweet.retweeted and 'RT @' not in tweet.full_text:
                     timeline['tweets'].append({
+                        'id': tweet.id,
                         'created_at': tweet.created_at,
                         'text': tweet.full_text,
                     })
                     if limit and len(timeline['tweets']) >= limit:
                         break
+                tweet = cursor.next()
             except tweepy.TweepError:
                 logger.warning('TweepError: Delaying...')
                 time.sleep(60 * 15)

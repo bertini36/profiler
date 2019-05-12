@@ -18,6 +18,14 @@ class Backend(ABC):
         pass
 
     @abstractmethod
+    def __enter__(self):
+        pass
+
+    @abstractmethod
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+    @abstractmethod
     def insert_timeline(self, timeline: dict):
         pass
 
@@ -44,21 +52,25 @@ class MongoBackend(Backend):
     def __init__(self, mongo_url, mongo_port, db_name, use_existing_db=True):
         self.url = mongo_url
         self.port = mongo_port
-        self.db_name = db_name
+        self.db_name = db_name  
         self.use_existing_db = use_existing_db
-        self.client = self.connect()
-        self.db = self.get_db()
 
     @property
     def name(self):
         return 'Mongo backend'
 
-    @logger.catch
-    def connect(self):
-        return pymongo.MongoClient(self.url, self.port)
+    @property
+    def timeline_collection(self):
+        return self.db.timelines
 
     @logger.catch
-    def disconnect(self):
+    def __enter__(self):
+        self.client = pymongo.MongoClient(self.url, self.port)
+        self.db = self.get_db()
+        return self
+
+    @logger.catch
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self.client.close()
 
     def get_db(self):
@@ -73,10 +85,6 @@ class MongoBackend(Backend):
         else:
             logger.info('Database doesn\'t exist, it will be created')
         return self.client[self.db_name]
-
-    @property
-    def timeline_collection(self):
-        return self.db.timelines
 
     def insert_timeline(self, timeline: dict):
         logger.info(f'Inserting {len(timeline["tweets"])} tweets with {self}')

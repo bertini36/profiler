@@ -13,7 +13,7 @@ from settings import (
 from src.backends import MongoBackend
 from src.preprocessing import Preprocessor
 from src.providers import TweepyProvider
-from src.tweets_downloader import TweetsDownloader
+from src.tweets_downloader import TimelineDownloader
 
 
 class Profiler:
@@ -25,7 +25,7 @@ class Profiler:
         python profiler.py get_timelines --users vidamoderna,
         """
         try:
-            t_downloader = TweetsDownloader(
+            t_downloader = TimelineDownloader(
                 TweepyProvider(
                     TWITTER_PUBLIC_KEY,
                     TWITTER_SECRET_KEY,
@@ -65,7 +65,7 @@ class Profiler:
             )
             for user in users:
                 mp.Process(
-                    target=preprocessor.process,
+                    target=preprocessor.run,
                     args=(user,),
                     kwargs={'save': save},
                 ).start()
