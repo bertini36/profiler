@@ -5,22 +5,22 @@ Profiler purpose is to identify main topics in personal twitter timelines.
 
 ### Basic usage
 
-Run environment
+**Run environment**
 ```bash
 make build
 make up
 ```
 
-Download and clean tweets:
+**Download and clean tweets**
 
-**Make commands**
+Make commands
 ```bash
 make gettimelines timelines=Albert_Rivera,sanchezcastejon
 make cleantimelines timelines=Albert_Rivera,sanchezcastejon
 make findtopics timelines=Albert_Rivera,sanchezcastejon n_topics=5
 ```
 
-**Python**
+Python
 ```python
 from profiler import Profiler
 
