@@ -111,7 +111,19 @@ with open('src/emojis.txt') as f:
 class Preprocessor(ABC):
 
     @abstractmethod
-    def run(self, username: str, save: bool = True) -> dict:
+    def run(
+        self, username: str, save: bool = True, replace_mentions: bool = True,
+        filter_mentions: bool = True, replace_emails: bool = True,
+        filter_emails: bool = True, replace_currencies: bool = True,
+        filter_currencies: bool = True, replace_urls: bool = True,
+        filter_urls: bool = True, replace_phone_numbers: bool = True,
+        filter_phone_numbers: bool = True, replace_numbers: bool = True,
+        filter_numbers: bool = True, replace_digits: bool = True,
+        filter_digits: bool = True, replace_emojis: bool = True,
+        filter_emojis: bool = True, remove_punct: bool = True,
+        remove_multiple_spaces: bool = True, to_lower: bool = True,
+        filter_stopwords: bool = True, filter_empty_rows: bool = True
+    ) -> dict:
         pass
 
 
