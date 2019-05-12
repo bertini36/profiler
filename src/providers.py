@@ -8,6 +8,11 @@ from loguru import logger
 
 from .exceptions import UserDoesNotExist
 
+"""
+TODO: 
+    - Filter retweets using a param
+"""
+
 
 class Provider(ABC):
 
@@ -33,7 +38,10 @@ class Provider(ABC):
 
 class TweepyProvider(Provider):
 
-    def __init__(self, public_key, secret_key, access_token, secret_token):
+    def __init__(
+        self, public_key: str, secret_key: str,
+        access_token: str, secret_token: str
+    ):
         self._public_key = public_key
         self._secret_key = secret_key
         self._access_token = access_token
@@ -53,7 +61,7 @@ class TweepyProvider(Provider):
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def download_timeline(self, username: str, limit=None) -> dict:
+    def download_timeline(self, username: str, limit: int = None) -> dict:
         """
         Download user tweets ignoring retweets
         :param username: Twitter username

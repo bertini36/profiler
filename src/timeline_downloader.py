@@ -20,7 +20,9 @@ class TimelineDownloader:
             else:
                 backend.insert_timeline(timeline)
 
-    def get_timeline(self, username: str, limit=None, save=False):
+    def get_timeline(
+        self, username: str, limit: int = None, save: bool = False
+    ):
         """
         Download user tweets ignoring retweets
         :param username: Twitter username

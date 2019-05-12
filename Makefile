@@ -22,3 +22,6 @@ gettimelines:
 
 cleantimelines:
 	$(PROFILER) clean_timelines $(timelines)
+
+findtopics:
+	$(PROFILER) find_topics $(timelines) $(n_topics)

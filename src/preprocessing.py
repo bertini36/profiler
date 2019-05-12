@@ -8,6 +8,12 @@ from loguru import logger
 
 from .exceptions import TimelineDoesNotExist
 
+"""
+TODO:
+    - Filter stopwords and lematize depending on language param
+    - Filter <url>, <number> or <mention> strs
+"""
+
 # Sources:
 # - https://github.com/jfilter/clean-text/
 # - https://github.com/kvvzr/python-emoji-regex
@@ -100,7 +106,7 @@ class Preprocessor:
     def __init__(self, storage_backend):
         self._storage_backend = storage_backend
 
-    def run(self, username: str, save=True) -> dict:
+    def run(self, username: str, save: bool = True) -> dict:
         """
         This function gets a timeline from storage backend and
         clean text of each tweet for future procedures

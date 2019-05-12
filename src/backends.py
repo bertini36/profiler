@@ -31,10 +31,24 @@ class Backend(ABC):
 
     @abstractmethod
     def get_timeline(self, user: str):
+        """
+        :return:
+        {
+            'user': 'x',
+            'tweets': [
+                {'id': 111, 'created_at': y, 'text': 'z'},
+                ...
+            ],
+            'cleaned_tweets': [
+                {'id': 111, 'created_at': y, 'text': 'cleaned_z'},
+                ...
+            ]
+        }
+        """
         pass
 
     @abstractmethod
-    def update_timeline(self, user: str, new_values):
+    def update_timeline(self, user: str, new_values: dict):
         pass
 
     @abstractmethod
@@ -49,7 +63,10 @@ class Backend(ABC):
 
 class MongoBackend(Backend):
 
-    def __init__(self, mongo_url, mongo_port, db_name, use_existing_db=True):
+    def __init__(
+        self, mongo_url: str, mongo_port: str,
+        db_name: str, use_existing_db: bool = True
+    ):
         self.url = mongo_url
         self.port = mongo_port
         self.db_name = db_name  
@@ -93,7 +110,7 @@ class MongoBackend(Backend):
     def get_timeline(self, user: str) -> dict:
         return self.timeline_collection.find_one({'user': user})
 
-    def update_timeline(self, user: str, new_values):
+    def update_timeline(self, user: str, new_values: dict):
         logger.info(f'Updating {user} timeline')
         query = {'user': user}
         self.timeline_collection.update_one(query, {'$set': new_values})
