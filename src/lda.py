@@ -13,9 +13,9 @@ from .exceptions import TimelineDoesNotExist
 """
 TODO:
     - Generate HTML graphics
-    - Use unanimity
+    - Use unanimity and threshold
     - Show progress using a versbose param
-    - Save results
+    - Save results in a optimum way to don't recalculate
 """
 
 
@@ -32,7 +32,7 @@ class Sentences:
 class LDA:
 
     def __init__(
-        self, storage_backend, n_topics=7, n_passes=500,
+        self, storage_backend, n_topics=5, n_passes=500,
         use_bigrams=False, min_df=50, threshold=0.5, unanimity=0.3
     ):
         logger.info(

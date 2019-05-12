@@ -6,3 +6,6 @@ django-environ==0.4.5
 pylint==2.3.1
 pandas==0.24.2
 gensim==3.7.3
+nltk==3.4.1
+stop-words==2018.7.23
+langdetect==1.0.7

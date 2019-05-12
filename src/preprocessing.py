@@ -2,16 +2,21 @@
 
 import re
 import string
+from abc import ABC, abstractmethod
 
+import nltk
 import pandas as pd
+from langdetect import detect
+from langdetect.lang_detect_exception import LangDetectException
 from loguru import logger
+from nltk.corpus import stopwords as nltk_stopwords
+from stop_words import get_stop_words, LANGUAGE_MAPPING
 
 from .exceptions import TimelineDoesNotExist
 
 """
 TODO:
-    - Filter stopwords and lematize depending on language param
-    - Filter <url>, <number> or <mention> strs
+    - Lematize depending on language param
 """
 
 # Sources:
@@ -38,7 +43,9 @@ CURRENCIES = {
 CURRENCY_REGEX = re.compile(
     f'({"|".join(re.escape(c) for c in CURRENCIES.keys())})+'
 )
-PUNCTUATION = list(string.punctuation) + ['?', '¿', '¡', '!']
+PUNCTUATION = list(string.punctuation) + [
+    '?', '¿', '¡', '!', '-', '->', '<-', '→', '—',
+]
 PUNCTUATION.remove('<')
 PUNCTUATION.remove('>')
 PUNCTUATION_REGEX = re.compile(
@@ -101,17 +108,58 @@ with open('src/emojis.txt') as f:
     )
 
 
-class Preprocessor:
+class Preprocessor(ABC):
+
+    @abstractmethod
+    def run(self, username: str, save: bool = True) -> dict:
+        pass
+
+
+class MyPreprocessor(Preprocessor):
 
     def __init__(self, storage_backend):
         self._storage_backend = storage_backend
+        nltk.download('stopwords')
 
-    def run(self, username: str, save: bool = True) -> dict:
+    def run(
+        self, username: str, save: bool = True, replace_mentions: bool = True,
+        filter_mentions: bool = True, replace_emails: bool = True,
+        filter_emails: bool = True, replace_currencies: bool = True,
+        filter_currencies: bool = True, replace_urls: bool = True,
+        filter_urls: bool = True, replace_phone_numbers: bool = True,
+        filter_phone_numbers: bool = True, replace_numbers: bool = True,
+        filter_numbers: bool = True, replace_digits: bool = True,
+        filter_digits: bool = True, replace_emojis: bool = True,
+        filter_emojis: bool = True, remove_punct: bool = True,
+        remove_multiple_spaces: bool = True, to_lower: bool = True,
+        filter_stopwords: bool = True, filter_empty_rows: bool = True
+    ) -> dict:
         """
         This function gets a timeline from storage backend and
         clean text of each tweet for future procedures
         :param username: Twitter username
         :param save: If True cleaned timeline will be saved at backend storage
+        :param replace_mentions: Replace mentions with <MENTION>
+        :param filter_mentions: Filter tweet <MENTION>s
+        :param replace_emails: Replace mentions with <EMAIL>
+        :param filter_emails: Filter tweet <EMAIL>s
+        :param replace_currencies: Replace mentions with <CURRENCY>
+        :param filter_currencies: Filter tweet <CURRENCY>s
+        :param replace_urls: Replace mentions with <URL>
+        :param filter_urls: Filter tweet <URLS>s
+        :param replace_phone_numbers: Replace mentions with <PHONE>
+        :param filter_phone_numbers: Filter tweet <PHONE>s
+        :param replace_numbers: Replace mentions with <NUMBER>
+        :param filter_numbers: Filter tweet <NUMBER>s
+        :param replace_digits: Replace mentions with 0
+        :param filter_digits: Filter tweet 0s
+        :param replace_emojis: Replace mentions with <EMOJI>
+        :param filter_emojis: Filter tweet <EMOJI>s
+        :param remove_punct: Remove punctuation symbols
+        :param remove_multiple_spaces: Remove joined spaces
+        :param to_lower: To lower case result tweets
+        :param filter_stopwords: Filter ``lang`` stopwords
+        :param filter_empty_rows: Filter empty tweets after preprocessing
         """
         screen_name = f'@{username}' if '@' not in username else username
         logger.info(f'Preprocessing {screen_name} timeline')
@@ -122,7 +170,30 @@ class Preprocessor:
                     f'There is no timeline for {screen_name} saved in '
                     f'{backend}. Please first, download it'
                 )
-            cleaned_timeline = self.clean_timeline(timeline)
+            cleaned_timeline = self.clean_timeline(
+                timeline,
+                replace_mentions=replace_mentions,
+                filter_mentions=filter_mentions,
+                replace_emails=replace_emails,
+                filter_emails=replace_emails,
+                replace_currencies=replace_currencies,
+                filter_currencies=filter_currencies,
+                replace_urls=replace_urls,
+                filter_urls=filter_urls,
+                replace_phone_numbers=replace_phone_numbers,
+                filter_phone_numbers=filter_phone_numbers,
+                replace_numbers=replace_numbers,
+                filter_numbers=filter_numbers,
+                replace_digits=replace_digits,
+                filter_digits=filter_digits,
+                replace_emojis=replace_emojis,
+                filter_emojis=filter_emojis,
+                remove_punct=remove_punct,
+                remove_multiple_spaces=remove_multiple_spaces,
+                to_lower=to_lower,
+                filter_stopwords=filter_stopwords,
+                filter_empty_rows=filter_empty_rows
+            )
             if save:
                 backend.update_timeline(screen_name, cleaned_timeline)
         return cleaned_timeline
@@ -130,12 +201,16 @@ class Preprocessor:
     @staticmethod
     def clean_timeline(
         timeline: dict, replace_mentions: bool = True,
-        replace_emails: bool = True, replace_currencies: bool = True,
-        replace_urls: bool = True, replace_phone_numbers: bool = True,
-        replace_numbers: bool = True, replace_digits: bool = True,
-        replace_emojis: bool = True, remove_punct: bool = True,
+        filter_mentions: bool = True, replace_emails: bool = True,
+        filter_emails: bool = True, replace_currencies: bool = True,
+        filter_currencies: bool = True, replace_urls: bool = True,
+        filter_urls: bool = True, replace_phone_numbers: bool = True,
+        filter_phone_numbers: bool = True, replace_numbers: bool = True,
+        filter_numbers: bool = True, replace_digits: bool = True,
+        filter_digits: bool = True, replace_emojis: bool = True,
+        filter_emojis: bool = True, remove_punct: bool = True,
         remove_multiple_spaces: bool = True, to_lower: bool = True,
-        filter_empty_rows: bool = True
+        filter_stopwords: bool = True, filter_empty_rows: bool = True
     ) -> dict:
         """
         This function will do all text
@@ -147,29 +222,55 @@ class Preprocessor:
         )
         logger.info(f'Preprocessing {df.shape[0]} tweets of {timeline["user"]}')
         if replace_mentions:
-            df['text'] = df['text'].apply(Preprocessor.replace_mentions)
+            df['text'] = df['text'].apply(
+                MyPreprocessor.replace_mentions,
+                args=('',) if filter_mentions else None
+            )
         if replace_emails:
-            df['text'] = df['text'].apply(Preprocessor.replace_emails)
+            df['text'] = df['text'].apply(
+                MyPreprocessor.replace_emails,
+                args=('',) if filter_emails else None
+            )
         if replace_currencies:
-            df['text'] = df['text'].apply(Preprocessor.replace_currencies)
+            df['text'] = df['text'].apply(
+                MyPreprocessor.replace_currencies,
+                args=('',) if filter_currencies else None
+            )
         if replace_urls:
-            df['text'] = df['text'].apply(Preprocessor.replace_urls)
+            df['text'] = df['text'].apply(
+                MyPreprocessor.replace_urls,
+                args=('',) if filter_urls else None
+            )
         if replace_phone_numbers:
-            df['text'] = df['text'].apply(Preprocessor.replace_phone_numbers)
+            df['text'] = df['text'].apply(
+                MyPreprocessor.replace_phone_numbers,
+                args=('',) if filter_phone_numbers else None
+            )
         if replace_numbers:
-            df['text'] = df['text'].apply(Preprocessor.replace_numbers)
+            df['text'] = df['text'].apply(
+                MyPreprocessor.replace_numbers,
+                args=('',) if filter_numbers else None
+            )
         if replace_digits:
-            df['text'] = df['text'].apply(Preprocessor.replace_digits)
+            df['text'] = df['text'].apply(
+                MyPreprocessor.replace_digits,
+                args=('',) if filter_digits else None
+            )
         if replace_emojis:
-            df['text'] = df['text'].apply(Preprocessor.replace_emojis)
+            df['text'] = df['text'].apply(
+                MyPreprocessor.replace_emojis,
+                args=('',) if filter_emojis else None
+            )
         if remove_punct:
-            df['text'] = df['text'].apply(Preprocessor.remove_punct)
+            df['text'] = df['text'].apply(MyPreprocessor.remove_punct)
         if remove_multiple_spaces:
-            df['text'] = df['text'].apply(Preprocessor.remove_multiple_spaces)
+            df['text'] = df['text'].apply(MyPreprocessor.remove_multiple_spaces)
         if to_lower:
             df['text'] = df['text'].apply(lambda text: text.lower())
+        if filter_stopwords:
+            df['text'] = df['text'].apply(MyPreprocessor.filter_stopwords)
         if filter_empty_rows:
-            mask = df.apply(Preprocessor.filter_empty_rows, axis=1)
+            mask = df.apply(MyPreprocessor.filter_empty_rows, axis=1)
             df = df[mask]
             logger.info(
                 f'There are {df.shape[0]} not null tweets of {timeline["user"]}'
@@ -249,7 +350,7 @@ class Preprocessor:
         return re.sub(r'\d', replace_with, text)
 
     @staticmethod
-    def replace_currencies(text: str, replace_with: str = '<CUR>') -> str:
+    def replace_currencies(text: str, replace_with: str = '<CURRENCY>') -> str:
         """
         Replace all currency symbols in ``text`` str with
         string specified by ``replace_with`` str.
@@ -280,7 +381,7 @@ class Preprocessor:
     @staticmethod
     def remove_punct(text: str) -> str:
         """
-        Replace punctuations from ``text`` with whitespaces.
+        Replace punctuations from ``text`` with whitespaces
         Args:
             text (str): raw text
         Returns:
@@ -294,6 +395,36 @@ class Preprocessor:
         Replace multiple spaces by single one
         """
         return re.sub(' +', ' ', text)
+
+    @staticmethod
+    def get_stopwords(text):
+        """
+        Get stopwords using text language
+        """
+        try:
+            lang = detect(text)
+        except LangDetectException:
+            lang = 'en'
+        stopwords = []
+        if lang in LANGUAGE_MAPPING:
+            stopwords = get_stop_words(lang)
+            try:
+                stopwords.extend(nltk_stopwords.words(LANGUAGE_MAPPING[lang]))
+            except OSError:
+                # NLTK does not have lang stopwords
+                pass
+        return stopwords
+
+    @staticmethod
+    def filter_stopwords(text: str):
+        """
+        Filter language specified stopwords from ``text``
+        """
+        stopwords = MyPreprocessor.get_stopwords(text)
+        filtered_words = [
+            word for word in text.split() if word not in stopwords
+        ]
+        return ' '.join(filtered_words)
 
     @staticmethod
     def filter_empty_rows(row) -> bool:

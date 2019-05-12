@@ -13,25 +13,25 @@ make up
 
 Download and clean tweets:
 
-Make commands
+**Make commands**
 ```bash
 make gettimelines timelines=Albert_Rivera,sanchezcastejon
 make cleantimelines timelines=Albert_Rivera,sanchezcastejon
+make findtopics timelines=Albert_Rivera,sanchezcastejon n_topics=5
 ```
 
-Python
+**Python**
 ```python
 from profiler import Profiler
 
 Profiler.get_timelines(users='Pablo_Iglesias_,pablocasado_')
 Profiler.clean_timelines(users='Pablo_Iglesias_,pablocasado_')
+Profiler.find_topics(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
+
 ```
 
 ## Next work
 
-- Preprocessing textual data
-- Find main topics of an user using Latent Dirichlet Allocation algorithm
 - Show results using pyLDAvis
 - Make tests
 - Postgres backend with SQLAlchemist
-- Make async providers and backends to work with asyncio

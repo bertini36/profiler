@@ -6,13 +6,18 @@ import fire
 from loguru import logger
 
 from settings import (
-    MONGO_URL, MONGO_PORT, MONGO_DB, USE_EXISTING_DATABASE,
-    TWITTER_PUBLIC_KEY, TWITTER_SECRET_KEY,
-    TWITTER_ACCESS_TOKEN, TWITTER_SECRET_TOKEN,
-    LDA_N_PASSES, LDA_USE_BIGRAMS, LDA_MIN_DF, LDA_THRESHOLD, LDA_UNANIMITY,
+    MONGO_URL, MONGO_PORT, MONGO_DB, USE_EXISTING_DATABASE, TWITTER_PUBLIC_KEY,
+    TWITTER_SECRET_KEY, TWITTER_ACCESS_TOKEN, TWITTER_SECRET_TOKEN,
+    REPLACE_MENTIONS, FILTER_MENTIONS, REPLACE_EMAILS, FILTER_EMAILS,
+    REPLACE_CURRENCIES, FILTER_CURRENCIES, REPLACE_URLS, FILTER_URLS,
+    REPLACE_PHONE_NUMBERS, FILTER_PHONE_NUMBERS, REPLACE_NUMBERS,
+    FILTER_NUMBERS, REPLACE_DIGITS, FILTER_DIGITS, REPLACE_EMOJIS,
+    FILTER_EMOJIS, REMOVE_PUNCT, REMOVE_MULTIPLE_SPACES, TO_LOWER,
+    FILTER_STOPWORDS, FILTER_EMPTY_ROWS, LDA_N_PASSES, LDA_USE_BIGRAMS,
+    LDA_MIN_DF, LDA_THRESHOLD, LDA_UNANIMITY,
 )
 from src.backends import MongoBackend
-from src.preprocessing import Preprocessor
+from src.preprocessing import MyPreprocessor
 from src.providers import TweepyProvider
 from src.timeline_downloader import TimelineDownloader
 from src.lda import LDA
@@ -57,26 +62,49 @@ class Profiler:
         python profiler.py clean_timelines --users vidamoderna,
         """
         try:
-            preprocessor = Preprocessor(
+            preprocessor = MyPreprocessor(
                 MongoBackend(
                     MONGO_URL,
                     MONGO_PORT,
                     MONGO_DB,
                     USE_EXISTING_DATABASE
-                )
+                ),
             )
             for user in users:
                 mp.Process(
                     target=preprocessor.run,
                     args=(user,),
-                    kwargs={'save': save},
+                    kwargs={
+                        'save': save,
+                        'replace_mentions': REPLACE_MENTIONS,
+                        'filter_mentions': FILTER_MENTIONS,
+                        'replace_emails': REPLACE_EMAILS,
+                        'filter_emails': FILTER_EMAILS,
+                        'replace_currencies': REPLACE_CURRENCIES,
+                        'filter_currencies': FILTER_CURRENCIES,
+                        'replace_urls': REPLACE_URLS,
+                        'filter_urls': FILTER_URLS,
+                        'replace_phone_numbers': REPLACE_PHONE_NUMBERS,
+                        'filter_phone_numbers': FILTER_PHONE_NUMBERS,
+                        'replace_numbers': REPLACE_NUMBERS,
+                        'filter_numbers': FILTER_NUMBERS,
+                        'replace_digits': REPLACE_DIGITS,
+                        'filter_digits': FILTER_DIGITS,
+                        'replace_emojis': REPLACE_EMOJIS,
+                        'filter_emojis': FILTER_EMOJIS,
+                        'remove_punct': REMOVE_PUNCT,
+                        'remove_multiple_spaces': REMOVE_MULTIPLE_SPACES,
+                        'to_lower': TO_LOWER,
+                        'filter_stopwords': FILTER_STOPWORDS,
+                        'filter_empty_rows': FILTER_EMPTY_ROWS
+                    },
                 ).start()
         except Exception as e:
             logger.error(e)
 
     @staticmethod
     def find_topics(
-        users: str = 'vidamoderna,', n_topics: int = 7, save: bool = True
+        users: str = 'vidamoderna,', n_topics: int = 5, save: bool = True
     ):
         """
         Exec:
