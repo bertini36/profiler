@@ -12,12 +12,8 @@ from loguru import logger
 from nltk.corpus import stopwords as nltk_stopwords
 from stop_words import get_stop_words, LANGUAGE_MAPPING
 
+from .decorators import timeit
 from .exceptions import TimelineDoesNotExist
-
-"""
-TODO:
-    - Lematize depending on language param
-"""
 
 # Sources:
 # - https://github.com/jfilter/clean-text/
@@ -112,7 +108,7 @@ class Preprocessor(ABC):
 
     @abstractmethod
     def run(
-        self, username: str, save: bool = True, replace_mentions: bool = True,
+        self, user: str, save: bool = True, replace_mentions: bool = True,
         filter_mentions: bool = True, replace_emails: bool = True,
         filter_emails: bool = True, replace_currencies: bool = True,
         filter_currencies: bool = True, replace_urls: bool = True,
@@ -133,8 +129,9 @@ class MyPreprocessor(Preprocessor):
         self._storage_backend = storage_backend
         nltk.download('stopwords')
 
+    @timeit
     def run(
-        self, username: str, save: bool = True, replace_mentions: bool = True,
+        self, user: str, save: bool = True, replace_mentions: bool = True,
         filter_mentions: bool = True, replace_emails: bool = True,
         filter_emails: bool = True, replace_currencies: bool = True,
         filter_currencies: bool = True, replace_urls: bool = True,
@@ -149,7 +146,7 @@ class MyPreprocessor(Preprocessor):
         """
         This function gets a timeline from storage backend and
         clean text of each tweet for future procedures
-        :param username: Twitter username
+        :param user: Twitter username
         :param save: If True cleaned timeline will be saved at backend storage
         :param replace_mentions: Replace mentions with <MENTION>
         :param filter_mentions: Filter tweet <MENTION>s
@@ -173,13 +170,12 @@ class MyPreprocessor(Preprocessor):
         :param filter_stopwords: Filter ``lang`` stopwords
         :param filter_empty_rows: Filter empty tweets after preprocessing
         """
-        screen_name = f'@{username}' if '@' not in username else username
-        logger.info(f'Preprocessing {screen_name} timeline')
+        logger.info(f'Preprocessing {user} timeline')
         with self._storage_backend as backend:
-            timeline = backend.get_timeline(screen_name)
+            timeline = backend.get_timeline(user)
             if not timeline:
                 raise TimelineDoesNotExist(
-                    f'There is no timeline for {screen_name} saved in '
+                    f'There is no timeline for {user} saved in '
                     f'{backend}. Please first, download it'
                 )
             cleaned_timeline = self.clean_timeline(
@@ -207,7 +203,7 @@ class MyPreprocessor(Preprocessor):
                 filter_empty_rows=filter_empty_rows
             )
             if save:
-                backend.update_timeline(screen_name, cleaned_timeline)
+                backend.update_timeline(user, cleaned_timeline)
         return cleaned_timeline
 
     @staticmethod

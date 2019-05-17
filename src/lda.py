@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+import pickle
+import warnings
 from pprint import pprint
 
 import pandas as pd
@@ -8,15 +10,12 @@ from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.phrases import Phrases, Phraser
 from loguru import logger
 
+from .decorators import timeit
 from .exceptions import TimelineDoesNotExist
 
-"""
-TODO:
-    - Generate HTML graphics
-    - Use unanimity and threshold
-    - Show progress using a versbose param
-    - Save results in a optimum way to don't recalculate
-"""
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore', DeprecationWarning)
+    import pyLDAvis.gensim
 
 
 class Sentences:
@@ -32,43 +31,80 @@ class Sentences:
 class LDA:
 
     def __init__(
-        self, storage_backend, n_topics=5, n_passes=500,
-        use_bigrams=False, min_df=50, threshold=0.5, unanimity=0.3
+        self, storage_backend, n_topics=5,
+        n_passes=200, use_bigrams=False, min_df=50
     ):
         logger.info(
             f'Latent Dirichlet Allocation with n_topics={n_topics}, '
             f'n_passes={n_passes}, use_bigrams={use_bigrams},'
-            f' min_df={min_df}, threshold={threshold}, '
-            f'unanimity={unanimity} and using {storage_backend}'
+            f' min_df={min_df} and using {storage_backend}'
         )
         self._storage_backend = storage_backend
         self.n_topics = n_topics
         self.n_passes = n_passes
         self.use_bigrams = use_bigrams
         self.min_df = min_df
-        self.threshold = threshold
-        self.unanimity = unanimity
 
-    def run(self, username: str, save: bool = True):
-        screen_name = f'@{username}' if '@' not in username else username
-        logger.info(f'Run LDA for {screen_name} timeline')
+    @timeit
+    def run(self, user: str, save: bool = True, verbose: bool = False):
+        """
+        This function infers a LDA topic model of user specified
+        :param user: Username to construct model
+        :param save: If True, results will be saved at storage_backend
+        :param verbose: Shows more used terms in a print
+        """
+        logger.info(f'Run LDA for {user} timeline')
         with self._storage_backend as backend:
-            timeline = backend.get_timeline(screen_name)
-            if not timeline:
-                raise TimelineDoesNotExist(
-                    f'There is no timeline for {screen_name} saved in '
-                    f'{backend}. Please first, download it'
-                )
-            bow, dictionary = self.prepare_data(timeline)
-            logger.info('Inferring LDA...')
-            lda = LdaMulticore(
-                bow,
-                id2word=dictionary,
-                num_topics=self.n_topics,
-                passes=self.n_passes,
-                random_state=0,
+            timeline = self.__class__.get_timeline(user, backend)
+            exec_key = self.get_execution_key(user)
+            model = self.infer_model(timeline, exec_key, verbose)
+            if model and save:
+                self.save_model(model, timeline)
+
+    @staticmethod
+    def get_timeline(user: str, backend):
+        timeline = backend.get_timeline(user)
+        if not timeline:
+            raise TimelineDoesNotExist(
+                f'There is no timeline for {user} saved in '
+                f'{backend}. Please first, download it'
             )
-            self.print_topics(lda)
+        return timeline
+
+    def infer_model(self, timeline: dict, exec_key, verbose: bool = False):
+        bow, dictionary = self.prepare_data(timeline)
+        if self.__class__.model_is_already_inferred(timeline, exec_key):
+            logger.info('Model is already inferred')
+            model = pickle.loads(timeline['models'][exec_key])
+        else:
+            logger.info('Inferring LDA...')
+            try:
+                model = LdaMulticore(
+                    bow,
+                    id2word=dictionary,
+                    num_topics=self.n_topics,
+                    passes=self.n_passes,
+                    random_state=0,
+                )
+            except ValueError as e:
+                error = 'cannot compute LDA over an empty collection (no terms)'
+                if str(e) == error:
+                    logger.error(
+                        'Cannot compute LDA, there are no terms enough. '
+                        'Maybe you need to decrease LDA_MIN_DF setting'
+                    )
+                return None
+        if verbose:
+            self.print_terms(model)
+        self.generate_html(model, bow, dictionary, timeline['user'])
+        return model
+
+    @staticmethod
+    def model_is_already_inferred(timeline: dict, exec_key: str):
+        return 'models' in timeline and exec_key in timeline['models']
+
+    def get_execution_key(self, user: str):
+        return f'{user}-t{self.n_topics}-p{self.n_passes}'
 
     def prepare_data(self, timeline: dict) -> (list, corpora.Dictionary):
         df = pd.DataFrame(
@@ -94,7 +130,7 @@ class LDA:
         bow = list(map(dictionary.doc2bow, texts))
         return bow, dictionary
 
-    def print_topics(self, model: LdaMulticore):
+    def print_terms(self, model: LdaMulticore):
         topics = []
         for topic in model.print_topics(num_topics=self.n_topics, num_words=10):
             topics.append([
@@ -102,3 +138,22 @@ class LDA:
                 for s in str(topic[1]).split('+ ')
             ])
         pprint(topics)
+
+    def generate_html(
+        self, model: LdaMulticore, bow: list,
+        dictionary: corpora.Dictionary, user: str
+    ):
+        data = pyLDAvis.gensim.prepare(model, bow, dictionary)
+        pyLDAvis.save_html(
+            data,
+            f'output/{self.get_execution_key(user)}.html'
+        )
+
+    def save_model(self, model: LdaMulticore, timeline: dict):
+        logger.info(f'Saving lda model at {self._storage_backend}')
+        serialized_model = pickle.dumps(model)
+        exec_key = self.get_execution_key(timeline['user'])
+        if 'models' not in timeline:
+            timeline['models'] = {}
+        timeline['models'][exec_key] = serialized_model
+        self._storage_backend.update_timeline(timeline['user'], timeline)

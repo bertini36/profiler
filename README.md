@@ -27,11 +27,13 @@ from profiler import Profiler
 Profiler.get_timelines(users='Pablo_Iglesias_,pablocasado_')
 Profiler.clean_timelines(users='Pablo_Iglesias_,pablocasado_')
 Profiler.find_topics(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
-
 ```
+
+### Algorithm configs
+
+You can customize some algorithm technical configs at `settings.py`
 
 ## Next work
 
-- Show results using pyLDAvis
+- Async mongo backend
 - Make tests
-- Postgres backend with SQLAlchemist

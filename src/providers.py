@@ -6,12 +6,8 @@ from abc import ABC, abstractmethod, abstractproperty
 import tweepy
 from loguru import logger
 
+from .decorators import timeit
 from .exceptions import UserDoesNotExist
-
-"""
-TODO: 
-    - Filter retweets using a param
-"""
 
 
 class Provider(ABC):
@@ -32,7 +28,7 @@ class Provider(ABC):
         pass
 
     @abstractmethod
-    def download_timeline(self, username: str, limit=None):
+    def download_timeline(self, user: str, limit=None):
         pass
 
 
@@ -61,37 +57,45 @@ class TweepyProvider(Provider):
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def download_timeline(self, username: str, limit: int = None) -> dict:
+    @staticmethod
+    def is_retweet(tweet):
+        return tweet.retweeted or 'RT @' in tweet.full_text
+
+    @timeit
+    def download_timeline(
+        self, user: str, limit: int = None, filter_retweets: bool = True
+    ) -> dict:
         """
         Download user tweets ignoring retweets
-        :param username: Twitter username
+        :param user: Twitter username
         :param limit: Number of tweets to download
+        :param filter_retweets: Filter user retweets
         """
-        screen_name = f'@{username}' if '@' not in username else username
-        logger.info(f'Downloading {screen_name} timeline')
-        timeline = {'user': screen_name, 'tweets': []}
+        logger.info(f'Downloading {user} timeline')
+        timeline = {'user': user, 'tweets': []}
         cursor = tweepy.Cursor(
             self.api.user_timeline,
-            screen_name=screen_name,
+            screen_name=user,
             tweet_mode='extended'
         ).items()
         try:
             tweet = cursor.next()
         except tweepy.TweepError:
             raise UserDoesNotExist(
-                f'User {username} does not exist '
+                f'User {user} does not exist '
                 f'or it has not registered tweets'
             )
         while True:
             try:
-                if not tweet.retweeted and 'RT @' not in tweet.full_text:
-                    timeline['tweets'].append({
-                        'id': tweet.id,
-                        'created_at': tweet.created_at,
-                        'text': tweet.full_text,
-                    })
-                    if limit and len(timeline['tweets']) >= limit:
-                        break
+                if filter_retweets and self.__class__.is_retweet(tweet):
+                    continue
+                timeline['tweets'].append({
+                    'id': tweet.id,
+                    'created_at': tweet.created_at,
+                    'text': tweet.full_text,
+                })
+                if limit and len(timeline['tweets']) >= limit:
+                    break
                 tweet = cursor.next()
             except tweepy.TweepError:
                 logger.warning('TweepError: Delaying...')

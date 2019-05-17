@@ -14,16 +14,20 @@ from settings import (
     FILTER_NUMBERS, REPLACE_DIGITS, FILTER_DIGITS, REPLACE_EMOJIS,
     FILTER_EMOJIS, REMOVE_PUNCT, REMOVE_MULTIPLE_SPACES, TO_LOWER,
     FILTER_STOPWORDS, FILTER_EMPTY_ROWS, LDA_N_PASSES, LDA_USE_BIGRAMS,
-    LDA_MIN_DF, LDA_THRESHOLD, LDA_UNANIMITY,
+    LDA_MIN_DF,
 )
 from src.backends import MongoBackend
-from src.preprocessing import MyPreprocessor
+from src.preprocessors import MyPreprocessor
 from src.providers import TweepyProvider
 from src.timeline_downloader import TimelineDownloader
 from src.lda import LDA
 
 
 class Profiler:
+
+    @staticmethod
+    def clean_user(user):
+        return f'@{user}' if '@' not in user else user
 
     @staticmethod
     def get_timelines(users: str = 'vidamoderna,', save: bool = True):
@@ -49,7 +53,7 @@ class Profiler:
             for user in users:
                 mp.Process(
                     target=t_downloader.get_timeline,
-                    args=(user,),
+                    args=(Profiler.clean_user(user),),
                     kwargs={'save': save},
                 ).start()
         except Exception as e:
@@ -73,7 +77,7 @@ class Profiler:
             for user in users:
                 mp.Process(
                     target=preprocessor.run,
-                    args=(user,),
+                    args=(Profiler.clean_user(user),),
                     kwargs={
                         'save': save,
                         'replace_mentions': REPLACE_MENTIONS,
@@ -121,14 +125,12 @@ class Profiler:
                 n_topics=n_topics,
                 n_passes=LDA_N_PASSES,
                 use_bigrams=LDA_USE_BIGRAMS,
-                min_df=LDA_MIN_DF,
-                threshold=LDA_THRESHOLD,
-                unanimity=LDA_UNANIMITY
+                min_df=LDA_MIN_DF
             )
             for user in users:
                 mp.Process(
                     target=lda.run,
-                    args=(user,),
+                    args=(Profiler.clean_user(user),),
                     kwargs={'save': save},
                 ).start()
         except Exception as e:

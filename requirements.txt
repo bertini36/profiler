@@ -9,3 +9,4 @@ gensim==3.7.3
 nltk==3.4.1
 stop-words==2018.7.23
 langdetect==1.0.7
+pyLDAvis==2.1.2

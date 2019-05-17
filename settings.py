@@ -45,8 +45,6 @@ FILTER_EMPTY_ROWS = True
 
 # LDA
 # ******************************************************************************
-LDA_N_PASSES = 500
+LDA_N_PASSES = 200
 LDA_USE_BIGRAMS = True
-LDA_MIN_DF = 10
-LDA_THRESHOLD = 0.5
-LDA_UNANIMITY = 0.3
+LDA_MIN_DF = 0

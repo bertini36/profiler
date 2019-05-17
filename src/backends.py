@@ -7,6 +7,11 @@ from loguru import logger
 
 from .exceptions import DatabaseDoesNotExist
 
+"""
+TODO:
+    - Async Mongo backend with https://github.com/mongodb/motor
+"""
+
 
 class Backend(ABC):
 
@@ -42,7 +47,8 @@ class Backend(ABC):
             'cleaned_tweets': [
                 {'id': 111, 'created_at': y, 'text': 'cleaned_z'},
                 ...
-            ]
+            ],
+            ...
         }
         """
         pass
