@@ -1,5 +1,6 @@
 # Profiler
-Profiler purpose is to identify main topics in personal twitter timelines.
+Profiler tries to identify main topics in personal twitter timelines using 
+LDA topic models in a confortable and easy way for exploratory purposes.
 
 ## Usage
 
