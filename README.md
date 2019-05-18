@@ -35,5 +35,5 @@ You can customize some algorithm technical configs at `settings.py`
 
 ## Next work
 
-- Async mongo backend
 - Make tests
+- Make web application with Sanic

@@ -7,11 +7,6 @@ from loguru import logger
 
 from .exceptions import DatabaseDoesNotExist
 
-"""
-TODO:
-    - Async Mongo backend with https://github.com/mongodb/motor
-"""
-
 
 class Backend(ABC):
 
@@ -31,7 +26,7 @@ class Backend(ABC):
         pass
 
     @abstractmethod
-    def insert_timeline(self, timeline: dict):
+    def insert_timeline(self, timeline: dict) -> int:
         pass
 
     @abstractmethod
@@ -75,7 +70,7 @@ class MongoBackend(Backend):
     ):
         self.url = mongo_url
         self.port = mongo_port
-        self.db_name = db_name  
+        self.db_name = db_name
         self.use_existing_db = use_existing_db
 
     @property
@@ -92,10 +87,6 @@ class MongoBackend(Backend):
         self.db = self.get_db()
         return self
 
-    @logger.catch
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.client.close()
-
     def get_db(self):
         if self.db_name in self.client.list_database_names():
             if self.use_existing_db:
@@ -109,9 +100,14 @@ class MongoBackend(Backend):
             logger.info('Database doesn\'t exist, it will be created')
         return self.client[self.db_name]
 
-    def insert_timeline(self, timeline: dict):
+    @logger.catch
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.client.close()
+
+    def insert_timeline(self, timeline: dict) -> int:
         logger.info(f'Inserting {len(timeline["tweets"])} tweets with {self}')
-        self.timeline_collection.insert_one(timeline)
+        result = self.timeline_collection.insert_one(timeline)
+        return result.inserted_id
 
     def get_timeline(self, user: str) -> dict:
         return self.timeline_collection.find_one({'user': user})
