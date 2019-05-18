@@ -14,7 +14,7 @@ from settings import (
     FILTER_NUMBERS, REPLACE_DIGITS, FILTER_DIGITS, REPLACE_EMOJIS,
     FILTER_EMOJIS, REMOVE_PUNCT, REMOVE_MULTIPLE_SPACES, TO_LOWER,
     FILTER_STOPWORDS, FILTER_EMPTY_ROWS, LDA_N_PASSES, LDA_USE_BIGRAMS,
-    LDA_MIN_DF,
+    LDA_MIN_DF, FILTER_RTS
 )
 from src.backends import MongoBackend
 from src.preprocessors import MyPreprocessor
@@ -50,12 +50,17 @@ class Profiler:
                     USE_EXISTING_DATABASE
                 )
             )
+            pool = []
             for user in users:
-                mp.Process(
+                process = mp.Process(
                     target=t_downloader.get_timeline,
                     args=(Profiler.clean_user(user),),
-                    kwargs={'save': save},
-                ).start()
+                    kwargs={'save': save, 'filter_rts': FILTER_RTS},
+                )
+                process.start()
+                pool.append(process)
+            for process in pool:
+                process.join()
         except Exception as e:
             logger.error(e)
 
@@ -74,8 +79,9 @@ class Profiler:
                     USE_EXISTING_DATABASE
                 ),
             )
+            pool = []
             for user in users:
-                mp.Process(
+                process = mp.Process(
                     target=preprocessor.run,
                     args=(Profiler.clean_user(user),),
                     kwargs={
@@ -102,13 +108,17 @@ class Profiler:
                         'filter_stopwords': FILTER_STOPWORDS,
                         'filter_empty_rows': FILTER_EMPTY_ROWS
                     },
-                ).start()
+                )
+                process.start()
+                pool.append(process)
+            for process in pool:
+                process.join()
         except Exception as e:
             logger.error(e)
 
     @staticmethod
     def find_topics(
-        users: str = 'vidamoderna,', n_topics: int = 5, save: bool = True
+        users: str = 'vidamoderna,', save: bool = True, n_topics: int = 5
     ):
         """
         Exec:
@@ -127,14 +137,27 @@ class Profiler:
                 use_bigrams=LDA_USE_BIGRAMS,
                 min_df=LDA_MIN_DF
             )
+            pool = []
             for user in users:
-                mp.Process(
+                process = mp.Process(
                     target=lda.run,
                     args=(Profiler.clean_user(user),),
                     kwargs={'save': save},
-                ).start()
+                )
+                process.start()
+                pool.append(process)
+            for process in pool:
+                process.join()
         except Exception as e:
             logger.error(e)
+
+    @staticmethod
+    def run_all(
+        users: str = 'vidamoderna,', save: bool = True,  n_topics: int = 5
+    ):
+        Profiler.get_timelines(users, save)
+        Profiler.clean_timelines(users, save)
+        Profiler.find_topics(users, save, n_topics)
 
 
 if __name__ == '__main__':

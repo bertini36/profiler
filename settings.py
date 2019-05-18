@@ -18,6 +18,7 @@ TWITTER_PUBLIC_KEY = env('TWITTER_PUBLIC_KEY')
 TWITTER_SECRET_KEY = env('TWITTER_SECRET_KEY')
 TWITTER_ACCESS_TOKEN = env('TWITTER_ACCESS_TOKEN')
 TWITTER_SECRET_TOKEN = env('TWITTER_SECRET_TOKEN')
+FILTER_RTS = False
 
 # PREPROCESSING
 # ******************************************************************************

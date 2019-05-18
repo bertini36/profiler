@@ -28,7 +28,9 @@ class Provider(ABC):
         pass
 
     @abstractmethod
-    def download_timeline(self, user: str, limit=None):
+    def download_timeline(
+        self, user: str, limit=None, filter_retweets: bool = True
+    ) -> dict:
         pass
 
 
@@ -63,13 +65,13 @@ class TweepyProvider(Provider):
 
     @timeit
     def download_timeline(
-        self, user: str, limit: int = None, filter_retweets: bool = True
+        self, user: str, limit: int = None, filter_rts: bool = False
     ) -> dict:
         """
         Download user tweets ignoring retweets
         :param user: Twitter username
         :param limit: Number of tweets to download
-        :param filter_retweets: Filter user retweets
+        :param filter_rts: Filter user retweets
         """
         logger.info(f'Downloading {user} timeline')
         timeline = {'user': user, 'tweets': []}
@@ -87,7 +89,7 @@ class TweepyProvider(Provider):
             )
         while True:
             try:
-                if filter_retweets and self.__class__.is_retweet(tweet):
+                if filter_rts and self.__class__.is_retweet(tweet):
                     continue
                 timeline['tweets'].append({
                     'id': tweet.id,

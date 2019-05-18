@@ -19,6 +19,10 @@ make gettimelines timelines=Albert_Rivera,sanchezcastejon
 make cleantimelines timelines=Albert_Rivera,sanchezcastejon
 make findtopics timelines=Albert_Rivera,sanchezcastejon n_topics=5
 ```
+Run all steps:
+```bash
+make runall timelines=Albert_Rivera,sanchezcastejon n_topics=5
+```
 
 Python
 ```python
@@ -27,6 +31,10 @@ from profiler import Profiler
 Profiler.get_timelines(users='Pablo_Iglesias_,pablocasado_')
 Profiler.clean_timelines(users='Pablo_Iglesias_,pablocasado_')
 Profiler.find_topics(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
+```
+Run all steps:
+```python
+Profiler.make_all(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
 ```
 
 ### Algorithm configs

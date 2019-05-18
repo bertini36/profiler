@@ -25,3 +25,6 @@ cleantimelines:
 
 findtopics:
 	$(PROFILER) find_topics $(timelines) $(n_topics)
+
+runall:
+	$(PROFILER) run_all $(timelines) $(n_topics)
