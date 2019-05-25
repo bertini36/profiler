@@ -10,15 +10,8 @@ class TimelineDownloader:
         self._storage_backend = storage_backend
 
     def save_timeline(self, timeline: dict):
-        user = timeline['user']
         with self._storage_backend as backend:
-            if backend.exists_timeline(user):
-                logger.info(
-                    f'Timeline already saved in {backend}'
-                )
-                backend.update_timeline(user, timeline)
-            else:
-                backend.insert_timeline(timeline)
+            backend.insert_timeline(timeline)
 
     def get_timeline(
         self, user: str, limit: int = None,
@@ -32,9 +25,15 @@ class TimelineDownloader:
         :param filter_rts: Filter user retweets
         """
         logger.info(f'Downloading tweets using {self._provider}')
-        with self._provider as provider:
-            timeline = provider.download_timeline(
-                user, limit, filter_rts=filter_rts
-            )
-            if save:
-                self.save_timeline(timeline)
+        with self._storage_backend as backend:
+            if backend.exists_timeline(user):
+                logger.info(
+                    f'Timeline already downloaded and saved in {backend}'
+                )
+            else:
+                with self._provider as provider:
+                    timeline = provider.download_timeline(
+                        user, limit, filter_rts=filter_rts
+                    )
+                    if save:
+                        self.save_timeline(timeline)
