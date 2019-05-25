@@ -10,6 +10,12 @@ from .decorators import timeit
 from .exceptions import UserDoesNotExist
 
 
+"""
+TODO:
+    - Dont't download timeline if is already in db
+"""
+
+
 class Provider(ABC):
 
     def __repr__(self):

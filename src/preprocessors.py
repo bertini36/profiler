@@ -15,6 +15,11 @@ from stop_words import get_stop_words, LANGUAGE_MAPPING
 from .decorators import timeit
 from .exceptions import TimelineDoesNotExist
 
+"""
+TODO:
+    - Check stopwords catalan filter
+"""
+
 # Sources:
 # - https://github.com/jfilter/clean-text/
 # - https://github.com/kvvzr/python-emoji-regex

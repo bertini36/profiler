@@ -3,7 +3,6 @@ loguru==0.2.5
 pymongo==3.7.2
 tweepy==3.7.0
 django-environ==0.4.5
-pylint==2.3.1
 pandas==0.24.2
 gensim==3.7.3
 nltk==3.4.1
