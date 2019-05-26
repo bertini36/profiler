@@ -7,7 +7,6 @@ from settings import MONGO_URL, MONGO_PORT, MONGO_DB, USE_EXISTING_DATABASE
 from src.backends import MongoBackend
 from src.exceptions import TimelineDoesNotExist
 from src.lda import LDA
-from tests.test_providers import Tweet
 
 
 @pytest.mark.unit
