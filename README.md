@@ -1,6 +1,10 @@
 # Profiler
-Profiler tries to identify main topics in personal twitter timelines using 
-LDA topic models in a confortable and easy way for exploratory purposes
+[![Build Status](https://api.travis-ci.org/bertini36/profiler.svg?branch=master)](https://travis-ci.org/bertini36/profiler)
+[![codecov](https://codecov.io/gh/bertini36/profiler/branch/master/graph/badge.svg)](https://codecov.io/gh/bertini36/profiler)
+
+Profiler tries to identify main topics in personal Twitter timelines using 
+<a href="http://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf">LDA
+ topic models algorithm</a> in a easy way for simple exploratory purposes
 
 ## Usage
 
@@ -33,10 +37,12 @@ Profiler.get_timelines(users='Pablo_Iglesias_,pablocasado_')
 Profiler.clean_timelines(users='Pablo_Iglesias_,pablocasado_')
 Profiler.find_topics(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
 ```
-Run all steps:
+Run all with the same command:
 ```python
-Profiler.make_all(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
+Profiler.run_all(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
 ```
+
+And now you have time to take a coffe ☕️
 
 ### Algorithm configs
 
@@ -47,3 +53,7 @@ You can customize some algorithm technical configs at `settings.py`
 ```bash
 make run_tests
 ```
+
+### Results screenshot
+
+<p align="center"><img src="https://github.com/bertini36/profiler/blob/master/img/photo.png"/></p>
