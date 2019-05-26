@@ -11,20 +11,23 @@ up:
 down:
 	$(DOCKER_COMPOSE) down
 
-runmongo:
+run_mongo:
 	$(DRUN) mongodb
 
-mongoshell:
+mongo_shell:
 	$(DOCKER_COMPOSE) exec mongodb mongo
 
-gettimelines:
+get_timelines:
 	$(PROFILER) get_timelines $(timelines)
 
-cleantimelines:
+clean_timelines:
 	$(PROFILER) clean_timelines $(timelines)
 
-findtopics:
+find_topics:
 	$(PROFILER) find_topics $(timelines) $(n_topics)
 
-runall:
+run_all:
 	$(PROFILER) run_all $(timelines) $(n_topics)
+
+run_tests:
+	$(DRUN) --entrypoint pytest tests

@@ -1,6 +1,6 @@
 # Profiler
 Profiler tries to identify main topics in personal twitter timelines using 
-LDA topic models in a confortable and easy way for exploratory purposes.
+LDA topic models in a confortable and easy way for exploratory purposes
 
 ## Usage
 
@@ -16,13 +16,13 @@ make up
 
 Make commands
 ```bash
-make gettimelines timelines=Albert_Rivera,sanchezcastejon
-make cleantimelines timelines=Albert_Rivera,sanchezcastejon
-make findtopics timelines=Albert_Rivera,sanchezcastejon n_topics=5
+make get_timelines timelines=Albert_Rivera,sanchezcastejon
+make clean_timelines timelines=Albert_Rivera,sanchezcastejon
+make find_topics timelines=Albert_Rivera,sanchezcastejon n_topics=5
 ```
 Run all steps:
 ```bash
-make runall timelines=Albert_Rivera,sanchezcastejon n_topics=5
+make run_all timelines=Albert_Rivera,sanchezcastejon n_topics=5
 ```
 
 Python
@@ -42,6 +42,8 @@ Profiler.make_all(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
 
 You can customize some algorithm technical configs at `settings.py`
 
-## Next work
+### Testing
 
-- Make tests and run with Travis
+```bash
+make run_tests
+```

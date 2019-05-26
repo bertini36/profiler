@@ -26,3 +26,11 @@ services:
       - 27017:27017
     command: mongod --smallfiles
 
+  tests:
+   build:
+     context: .
+     args:
+       REQUIREMENTS: requirements.txt
+   env_file: .env
+   volumes:
+     - ".:/code"
