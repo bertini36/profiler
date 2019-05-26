@@ -44,5 +44,4 @@ You can customize some algorithm technical configs at `settings.py`
 
 ## Next work
 
-- Make tests
-- Make web application with Sanic
+- Make tests and run with Travis

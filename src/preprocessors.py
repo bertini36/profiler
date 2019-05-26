@@ -15,11 +15,6 @@ from stop_words import get_stop_words, LANGUAGE_MAPPING
 from .decorators import timeit
 from .exceptions import TimelineDoesNotExist
 
-"""
-TODO:
-    - Check stopwords catalan filter
-"""
-
 # Sources:
 # - https://github.com/jfilter/clean-text/
 # - https://github.com/kvvzr/python-emoji-regex
@@ -62,10 +57,6 @@ EMAIL_REGEX = re.compile(
     flags=re.IGNORECASE | re.UNICODE,
 )
 
-PHONE_REGEX = re.compile(
-    r'(?:^|(?<=[^\w)]))(\+?1[ .-]?)?(\(?\d{3}\)?[ .-]?)?'
-    r'(\d{3}[ .-]?\d{4})(\s?(?:ext\.?|[#x-])\s?\d{2,6})?(?:$|(?=\W))'
-)
 NUMBERS_REGEX = re.compile(
     r'(?:^|(?<=[^\w,.]))[+–-]?(([1-9]\d{0,2}(,\d{3})+(\.\d*)?)'
     r'|([1-9]\d{0,2}([ .]\d{3})+(,\d*)?)|(\d*?[.,]\d+)|\d+)(?:$|(?=\b))'
@@ -117,8 +108,7 @@ class Preprocessor(ABC):
         filter_mentions: bool = True, replace_emails: bool = True,
         filter_emails: bool = True, replace_currencies: bool = True,
         filter_currencies: bool = True, replace_urls: bool = True,
-        filter_urls: bool = True, replace_phone_numbers: bool = True,
-        filter_phone_numbers: bool = True, replace_numbers: bool = True,
+        filter_urls: bool = True, replace_numbers: bool = True,
         filter_numbers: bool = True, replace_digits: bool = True,
         filter_digits: bool = True, replace_emojis: bool = True,
         filter_emojis: bool = True, remove_punct: bool = True,
@@ -140,8 +130,7 @@ class MyPreprocessor(Preprocessor):
         filter_mentions: bool = True, replace_emails: bool = True,
         filter_emails: bool = True, replace_currencies: bool = True,
         filter_currencies: bool = True, replace_urls: bool = True,
-        filter_urls: bool = True, replace_phone_numbers: bool = True,
-        filter_phone_numbers: bool = True, replace_numbers: bool = True,
+        filter_urls: bool = True, replace_numbers: bool = True,
         filter_numbers: bool = True, replace_digits: bool = True,
         filter_digits: bool = True, replace_emojis: bool = True,
         filter_emojis: bool = True, remove_punct: bool = True,
@@ -193,8 +182,6 @@ class MyPreprocessor(Preprocessor):
                 filter_currencies=filter_currencies,
                 replace_urls=replace_urls,
                 filter_urls=filter_urls,
-                replace_phone_numbers=replace_phone_numbers,
-                filter_phone_numbers=filter_phone_numbers,
                 replace_numbers=replace_numbers,
                 filter_numbers=filter_numbers,
                 replace_digits=replace_digits,
@@ -217,8 +204,7 @@ class MyPreprocessor(Preprocessor):
         filter_mentions: bool = True, replace_emails: bool = True,
         filter_emails: bool = True, replace_currencies: bool = True,
         filter_currencies: bool = True, replace_urls: bool = True,
-        filter_urls: bool = True, replace_phone_numbers: bool = True,
-        filter_phone_numbers: bool = True, replace_numbers: bool = True,
+        filter_urls: bool = True, replace_numbers: bool = True,
         filter_numbers: bool = True, replace_digits: bool = True,
         filter_digits: bool = True, replace_emojis: bool = True,
         filter_emojis: bool = True, remove_punct: bool = True,
@@ -253,11 +239,6 @@ class MyPreprocessor(Preprocessor):
             df['text'] = df['text'].apply(
                 MyPreprocessor.replace_urls,
                 args=('',) if filter_urls else None
-            )
-        if replace_phone_numbers:
-            df['text'] = df['text'].apply(
-                MyPreprocessor.replace_phone_numbers,
-                args=('',) if filter_phone_numbers else None
             )
         if replace_numbers:
             df['text'] = df['text'].apply(
@@ -339,13 +320,6 @@ class MyPreprocessor(Preprocessor):
         Replace all emails in ``text`` str with ``replace_with`` str
         """
         return EMAIL_REGEX.sub(replace_with, text)
-
-    @staticmethod
-    def replace_phone_numbers(text: str, replace_with: str = '<PHONE>') -> str:
-        """
-        Replace all phone numbers in ``text`` str with ``replace_with`` str
-        """
-        return PHONE_REGEX.sub(replace_with, text)
 
     @staticmethod
     def replace_numbers(text: str, replace_with: str = '<NUMBER>') -> str:

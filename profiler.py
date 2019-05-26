@@ -94,8 +94,6 @@ class Profiler:
                         'filter_currencies': FILTER_CURRENCIES,
                         'replace_urls': REPLACE_URLS,
                         'filter_urls': FILTER_URLS,
-                        'replace_phone_numbers': REPLACE_PHONE_NUMBERS,
-                        'filter_phone_numbers': FILTER_PHONE_NUMBERS,
                         'replace_numbers': REPLACE_NUMBERS,
                         'filter_numbers': FILTER_NUMBERS,
                         'replace_digits': REPLACE_DIGITS,
