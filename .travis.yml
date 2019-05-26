@@ -5,4 +5,7 @@ python:
 install:
   - sudo rm -f /etc/boto.cfg
   - pip install -r requirements.txt
-script: pytest
+script:
+  - pytest --cov-report term --cov=app/test/
+after_success:
+  - codecov
