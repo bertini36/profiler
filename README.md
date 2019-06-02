@@ -14,7 +14,7 @@ If you don’t have Docker installed, follow the instructions for your OS:
 - On Windows, you’ll need [Docker for Windows](https://docs.docker.com/docker-for-windows/)
 - On Ubuntu, you’ll need [docker-engine](https://docs.docker.com/engine/installation/)
 
-And aditionally instal [Docker compose](https://docs.docker.com/compose/install/)
+And aditionally install [Docker compose](https://docs.docker.com/compose/install/)
 
 ## Usage
 
