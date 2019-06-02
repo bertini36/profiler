@@ -2,10 +2,8 @@
 
 import pytest
 
-from settings import (
-    TWITTER_PUBLIC_KEY, TWITTER_SECRET_KEY, TWITTER_ACCESS_TOKEN,
-    TWITTER_SECRET_TOKEN
-)
+from settings import (TWITTER_ACCESS_TOKEN, TWITTER_PUBLIC_KEY,
+                      TWITTER_SECRET_KEY, TWITTER_SECRET_TOKEN)
 from src.providers import TweepyProvider
 
 

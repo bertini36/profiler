@@ -29,6 +29,12 @@ find_topics:
 run_all:
 	$(PROFILER) run_all $(timelines) $(n_topics)
 
+run_lint:
+	echo "==> Sorting Python imports..."
+	$(DRUN) --entrypoint "isort --recursive --apply src tests" profiler
+	echo "==> Linting..."
+	$(DRUN) --entrypoint "pylint src tests" profiler
+
 run_tests:
 	$(DRUN) --entrypoint "pytest --cov-report term --cov=src/" tests
 	$(DRUN) --entrypoint "py3clean ." tests

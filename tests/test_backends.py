@@ -4,7 +4,7 @@ import pymongo
 import pytest
 from mock import patch
 
-from settings import MONGO_URL, MONGO_PORT, MONGO_DB, USE_EXISTING_DATABASE
+from settings import MONGO_DB, MONGO_PORT, MONGO_URL, USE_EXISTING_DATABASE
 from src.backends import MongoBackend
 from src.exceptions import DatabaseDoesNotExist
 

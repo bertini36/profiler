@@ -10,7 +10,7 @@ from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 from loguru import logger
 from nltk.corpus import stopwords as nltk_stopwords
-from stop_words import get_stop_words, LANGUAGE_MAPPING
+from stop_words import LANGUAGE_MAPPING, get_stop_words
 
 from .decorators import timeit
 from .exceptions import TimelineDoesNotExist

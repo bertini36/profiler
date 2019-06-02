@@ -3,7 +3,7 @@
 import pytest
 from mock import patch
 
-from settings import MONGO_URL, MONGO_PORT, MONGO_DB, USE_EXISTING_DATABASE
+from settings import MONGO_DB, MONGO_PORT, MONGO_URL, USE_EXISTING_DATABASE
 from src.backends import MongoBackend
 from src.exceptions import TimelineDoesNotExist
 from src.lda import LDA
@@ -142,4 +142,3 @@ class TestLDA:
         self.lda.prepare_data(self.timeline)
         make_bow_mock.assert_called_once()
         make_bigrams_mock.assert_called_once()
-

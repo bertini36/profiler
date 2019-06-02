@@ -7,7 +7,7 @@ from pprint import pprint
 import pandas as pd
 from gensim import corpora
 from gensim.models.ldamulticore import LdaMulticore
-from gensim.models.phrases import Phrases, Phraser
+from gensim.models.phrases import Phraser, Phrases
 from loguru import logger
 
 from .decorators import timeit
