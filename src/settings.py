@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
 
-import environ
+from environs import Env
 
-env = environ.Env()
-environ.Env.read_env('.env')
+# You can rename -env-sample for use hidden configs
+env = Env()
+env.read_env('.env')
 
 # MONGO
 # ******************************************************************************
