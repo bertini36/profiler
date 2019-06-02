@@ -1,6 +1,6 @@
 DOCKER_COMPOSE = docker-compose -f docker-compose.yml
 DRUN = $(DOCKER_COMPOSE) run --rm
-PROFILER = $(DRUN) --entrypoint python profiler profiler.py
+PROFILER = $(DRUN) -w /code/src --entrypoint "python profiler.py" profiler
 
 build:
 	$(DOCKER_COMPOSE) build
@@ -31,9 +31,9 @@ run_all:
 
 run_lint:
 	echo "==> Sorting Python imports..."
-	$(DRUN) --entrypoint "isort --recursive --apply src tests" profiler
+	$(DRUN) --entrypoint "isort --recursive --apply src tests" tests
 	echo "==> Linting..."
-	$(DRUN) --entrypoint "pylint src tests" profiler
+	$(DRUN) --entrypoint "pylint src tests" tests
 
 run_tests:
 	$(DRUN) --entrypoint "pytest --cov-report term --cov=src/" tests

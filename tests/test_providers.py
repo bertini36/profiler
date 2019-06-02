@@ -1,10 +1,13 @@
 # -*- coding: UTF-8 -*-
 
 import pytest
-
-from settings import (TWITTER_ACCESS_TOKEN, TWITTER_PUBLIC_KEY,
-                      TWITTER_SECRET_KEY, TWITTER_SECRET_TOKEN)
-from src.providers import TweepyProvider
+from src.classes.providers import TweepyProvider
+from src.settings import (
+    TWITTER_ACCESS_TOKEN,
+    TWITTER_PUBLIC_KEY,
+    TWITTER_SECRET_KEY,
+    TWITTER_SECRET_TOKEN,
+)
 
 
 class Tweet:

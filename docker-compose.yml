@@ -5,7 +5,7 @@ services:
     build:
       context: .
       args:
-        REQUIREMENTS: requirements.txt
+        REQUIREMENTS: requirements/requirements.txt
     env_file: .env
     volumes:
       - ".:/code"
@@ -21,7 +21,7 @@ services:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
     volumes:
-      - "/opt/profiler/data/db:/data/db"
+      - "/opt/classes/data/db:/data/db"
     ports:
       - 27017:27017
     command: mongod --smallfiles
@@ -30,6 +30,6 @@ services:
    build:
      context: .
      args:
-       REQUIREMENTS: requirements.txt
+       REQUIREMENTS: requirements/requirements-test.txt
    volumes:
      - ".:/code"

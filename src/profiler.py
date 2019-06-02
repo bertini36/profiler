@@ -3,23 +3,45 @@
 import multiprocessing as mp
 
 import fire
+from classes.backends import MongoBackend
+from classes.lda import LDA
+from classes.preprocessors import MyPreprocessor
+from classes.providers import TweepyProvider
+from classes.timeline_downloader import TimelineDownloader
 from loguru import logger
-
 from settings import (
-    MONGO_URL, MONGO_PORT, MONGO_DB, USE_EXISTING_DATABASE, TWITTER_PUBLIC_KEY,
-    TWITTER_SECRET_KEY, TWITTER_ACCESS_TOKEN, TWITTER_SECRET_TOKEN,
-    REPLACE_MENTIONS, FILTER_MENTIONS, REPLACE_EMAILS, FILTER_EMAILS,
-    REPLACE_CURRENCIES, FILTER_CURRENCIES, REPLACE_URLS, FILTER_URLS,
-    REPLACE_NUMBERS, FILTER_NUMBERS, REPLACE_DIGITS, FILTER_DIGITS,
-    REPLACE_EMOJIS, FILTER_EMOJIS, REMOVE_PUNCT, REMOVE_MULTIPLE_SPACES,
-    TO_LOWER, FILTER_STOPWORDS, FILTER_EMPTY_ROWS,
-    LDA_N_PASSES, LDA_USE_BIGRAMS, LDA_MIN_DF, FILTER_RTS
+    FILTER_CURRENCIES,
+    FILTER_DIGITS,
+    FILTER_EMAILS,
+    FILTER_EMOJIS,
+    FILTER_EMPTY_ROWS,
+    FILTER_MENTIONS,
+    FILTER_NUMBERS,
+    FILTER_RTS,
+    FILTER_STOPWORDS,
+    FILTER_URLS,
+    LDA_MIN_DF,
+    LDA_N_PASSES,
+    LDA_USE_BIGRAMS,
+    MONGO_DB,
+    MONGO_PORT,
+    MONGO_URL,
+    REMOVE_MULTIPLE_SPACES,
+    REMOVE_PUNCT,
+    REPLACE_CURRENCIES,
+    REPLACE_DIGITS,
+    REPLACE_EMAILS,
+    REPLACE_EMOJIS,
+    REPLACE_MENTIONS,
+    REPLACE_NUMBERS,
+    REPLACE_URLS,
+    TO_LOWER,
+    TWITTER_ACCESS_TOKEN,
+    TWITTER_PUBLIC_KEY,
+    TWITTER_SECRET_KEY,
+    TWITTER_SECRET_TOKEN,
+    USE_EXISTING_DATABASE,
 )
-from src.backends import MongoBackend
-from src.preprocessors import MyPreprocessor
-from src.providers import TweepyProvider
-from src.timeline_downloader import TimelineDownloader
-from src.lda import LDA
 
 
 class Profiler:

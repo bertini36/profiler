@@ -146,7 +146,7 @@ class LDA:
         data = pyLDAvis.gensim.prepare(model, bow, dictionary)
         pyLDAvis.save_html(
             data,
-            f'output/{self.get_execution_key(user)}.html'
+            f'../output/{self.get_execution_key(user)}.html'
         )
 
     def save_model(self, model: LdaMulticore, timeline: dict):

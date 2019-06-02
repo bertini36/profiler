@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import pytest
-
-from src.preprocessors import MyPreprocessor
+from src.classes.preprocessors import MyPreprocessor
 
 
 @pytest.mark.unit

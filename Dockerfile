@@ -6,7 +6,7 @@ WORKDIR /code/
 
 RUN apt update
 
-COPY requirements.txt ${REQUIREMENTS} /code/
+COPY requirements/requirements.txt ${REQUIREMENTS} /code/requirements/
 
 RUN pip3 install --upgrade pip \
  && pip3 install -r ${REQUIREMENTS}
