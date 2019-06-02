@@ -21,3 +21,6 @@ __pycache__
 # Outputs
 output/*
 !output/.gitkeep
+
+# Coverage
+.coverage

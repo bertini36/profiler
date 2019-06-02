@@ -30,4 +30,7 @@ run_all:
 	$(PROFILER) run_all $(timelines) $(n_topics)
 
 run_tests:
-	$(DRUN) --entrypoint pytest tests
+	$(DRUN) --entrypoint "pytest --cov-report term --cov=src/" tests
+	$(DRUN) --entrypoint "py3clean ." tests
+	$(DRUN) --entrypoint "rm -rf .pytest_cache/" tests
+	$(DRUN) --entrypoint "rm -rf .coverage" tests
