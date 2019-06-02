@@ -54,6 +54,11 @@ You can customize some algorithm technical configs at `settings.py`
 make run_tests
 ```
 
+### Lint
+```bash
+make run_lint
+```
+
 ### Results screenshot
 
 <p align="center"><img src="https://github.com/bertini36/profiler/blob/master/img/photo.png"/></p>
