@@ -31,6 +31,5 @@ services:
      context: .
      args:
        REQUIREMENTS: requirements.txt
-   env_file: .env
    volumes:
      - ".:/code"
