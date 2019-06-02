@@ -1,7 +1,12 @@
 dist: xenial
+sudo: true
+services:
+  - docker
 language: python
 python:
   - "3.7"
+before_install:
+  - make build
 install:
   - sudo rm -f /etc/boto.cfg
   - pip install -r requirements.txt
