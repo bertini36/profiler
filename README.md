@@ -12,7 +12,7 @@ If you don’t have Docker installed, follow the instructions for your OS:
 
 - On Mac OS X, you’ll need [Docker for Mac](https://docs.docker.com/docker-for-mac/)
 - On Windows, you’ll need [Docker for Windows](https://docs.docker.com/docker-for-windows/)
-- On Ubuntu, you’ll need [docker-engine](https://docs.docker.com/engine/installation/)
+- On Linux, you’ll need [docker-engine](https://docs.docker.com/engine/installation/)
 
 And aditionally install [Docker compose](https://docs.docker.com/compose/install/)
 
