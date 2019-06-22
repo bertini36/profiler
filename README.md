@@ -36,10 +36,10 @@ make down
 ```
 
 ### Configurations
-Set Mongo configs and Twitter API keys in `src/.env` file using `src/.env-sample` file
+Set Mongo configs and Twitter API keys in `.env` file using `.env-sample` file
 ```bash
-cp src/.env-sample src/.env
-vim src/.env
+cp .env-sample .env
+vim .env
 ```
 
 **Download timeline, clean tweets and find topics**

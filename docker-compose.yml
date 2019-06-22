@@ -6,7 +6,7 @@ services:
       context: .
       args:
         REQUIREMENTS: requirements/requirements.txt
-    env_file: src/.env
+    env_file: .env
     volumes:
       - ".:/code"
     depends_on:
@@ -16,7 +16,7 @@ services:
     image: mongo:latest
     restart: always
     container_name: "mongodb"
-    env_file: src/.env
+    env_file: .env
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null

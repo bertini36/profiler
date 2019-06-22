@@ -2,6 +2,7 @@
 
 import pytest
 from mock import patch
+
 from src.classes.backends import MongoBackend
 from src.classes.exceptions import TimelineDoesNotExist
 from src.classes.lda import LDA

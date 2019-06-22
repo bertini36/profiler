@@ -1,6 +1,6 @@
 DOCKER_COMPOSE = docker-compose -f docker-compose.yml
 DRUN = $(DOCKER_COMPOSE) run --rm
-PROFILER = $(DRUN) -w /code/src --entrypoint "python profiler.py" profiler
+PROFILER = $(DRUN) -w /code/ --entrypoint "python src/profiler.py" profiler
 
 build:
 	$(DOCKER_COMPOSE) build

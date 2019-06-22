@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import pytest
+
 from src.classes.providers import TweepyProvider
 from src.settings import (
     TWITTER_ACCESS_TOKEN,

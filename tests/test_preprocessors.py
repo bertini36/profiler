@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import pytest
+
 from src.classes.preprocessors import MyPreprocessor
 
 
