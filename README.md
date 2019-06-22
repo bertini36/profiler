@@ -35,6 +35,13 @@ make up
 make down
 ```
 
+### Configurations
+Set Mongo configs and Twitter API keys in `src/.env` file using `src/.env-sample` file
+```bash
+cp src/.env-sample src/.env
+vim src/.env
+```
+
 **Download timeline, clean tweets and find topics**
 
 Make commands

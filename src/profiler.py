@@ -3,12 +3,13 @@
 import multiprocessing as mp
 
 import fire
+from loguru import logger
+
 from classes.backends import MongoBackend
 from classes.lda import LDA
 from classes.preprocessors import MyPreprocessor
 from classes.providers import TweepyProvider
 from classes.timeline_downloader import TimelineDownloader
-from loguru import logger
 from settings import (
     FILTER_CURRENCIES,
     FILTER_DIGITS,
@@ -51,11 +52,21 @@ class Profiler:
         return f'@{user}' if '@' not in user else user
 
     @staticmethod
-    def get_timelines(users: str = 'vidamoderna,', save: bool = True):
+    def parse_users_param(users):
+        if isinstance(users, str):
+            return tuple([users])
+        elif isinstance(users, tuple):
+            return users
+        else:
+            raise Exception('Users param is not in a correct format')
+
+    @staticmethod
+    def get_timelines(users: str = 'vidamoderna', save: bool = True):
         """
         Exec:
-        python profiler.py get_timelines --users vidamoderna,
+        python profiler.py get_timelines --users vidamoderna
         """
+        users = Profiler.parse_users_param(users)
         try:
             t_downloader = TimelineDownloader(
                 TweepyProvider(
@@ -86,11 +97,12 @@ class Profiler:
             logger.error(e)
 
     @staticmethod
-    def clean_timelines(users: str = 'vidamoderna,', save: bool = True):
+    def clean_timelines(users: str = 'vidamoderna', save: bool = True):
         """
         Exec:
-        python profiler.py clean_timelines --users vidamoderna,
+        python profiler.py clean_timelines --users vidamoderna
         """
+        users = Profiler.parse_users_param(users)
         try:
             preprocessor = MyPreprocessor(
                 MongoBackend(
@@ -137,12 +149,13 @@ class Profiler:
 
     @staticmethod
     def find_topics(
-        users: str = 'vidamoderna,', save: bool = True, n_topics: int = 5
+        users: str = 'vidamoderna', save: bool = True, n_topics: int = 5
     ):
         """
         Exec:
-        python profiler.py find_topics --users vidamoderna,
+        python profiler.py find_topics --users vidamoderna
         """
+        users = Profiler.parse_users_param(users)
         try:
             lda = LDA(
                 MongoBackend(
@@ -172,8 +185,12 @@ class Profiler:
 
     @staticmethod
     def run_all(
-        users: str = 'vidamoderna,', save: bool = True,  n_topics: int = 5
+        users: str = 'vidamoderna', save: bool = True,  n_topics: int = 5
     ):
+        """
+        Exec:
+        python profiler.py run_all --users vidamoderna
+        """
         Profiler.get_timelines(users, save)
         Profiler.clean_timelines(users, save)
         Profiler.find_topics(users, save, n_topics)

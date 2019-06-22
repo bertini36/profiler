@@ -16,7 +16,7 @@ __pycache__
 .idea
 
 # Confs
-.env
+src/.env
 
 # Outputs
 output/*
