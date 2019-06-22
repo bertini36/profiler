@@ -6,7 +6,7 @@ language: python
 python:
   - "3.7"
 before_install:
-  - touch .env
+  - touch src/.env
   - docker-compose build tests
 script:
   - make run_tests
