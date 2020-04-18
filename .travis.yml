@@ -1,5 +1,7 @@
 dist: xenial
 sudo: true
+env:
+  - CODECOV_TOKEN=a85c4b22-159c-49a2-a813-e647c2045371
 services:
   - docker
 language: python

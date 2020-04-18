@@ -150,8 +150,6 @@ class MyPreprocessor(Preprocessor):
         :param filter_currencies: Filter tweet <CURRENCY>s
         :param replace_urls: Replace mentions with <URL>
         :param filter_urls: Filter tweet <URLS>s
-        :param replace_phone_numbers: Replace mentions with <PHONE>
-        :param filter_phone_numbers: Filter tweet <PHONE>s
         :param replace_numbers: Replace mentions with <NUMBER>
         :param filter_numbers: Filter tweet <NUMBER>s
         :param replace_digits: Replace mentions with 0
