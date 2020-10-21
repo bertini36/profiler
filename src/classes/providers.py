@@ -11,7 +11,6 @@ from .exceptions import UserDoesNotExist
 
 
 class Provider(ABC):
-
     def __repr__(self):
         return self.name
 
@@ -35,10 +34,12 @@ class Provider(ABC):
 
 
 class TweepyProvider(Provider):
-
     def __init__(
-        self, public_key: str, secret_key: str,
-        access_token: str, secret_token: str
+        self,
+        public_key: str,
+        secret_key: str,
+        access_token: str,
+        secret_token: str,
     ):
         self._public_key = public_key
         self._secret_key = secret_key
@@ -76,26 +77,27 @@ class TweepyProvider(Provider):
         logger.info(f'Downloading {user} timeline')
         timeline = {'user': user, 'tweets': []}
         cursor = tweepy.Cursor(
-            self.api.user_timeline,
-            screen_name=user,
-            tweet_mode='extended'
+            self.api.user_timeline, screen_name=user, tweet_mode='extended'
         ).items()
         try:
             tweet = cursor.next()
-        except tweepy.TweepError:
+        except tweepy.TweepError as e:
+            print(e)
             raise UserDoesNotExist(
                 f'User {user} does not exist '
-                f'or it has not registered tweets'
+                f'or it has not registered tweets. e: {e}'
             )
         while True:
             try:
                 if filter_rts and self.__class__.is_retweet(tweet):
                     continue
-                timeline['tweets'].append({
-                    'id': tweet.id,
-                    'created_at': tweet.created_at,
-                    'text': tweet.full_text,
-                })
+                timeline['tweets'].append(
+                    {
+                        'id': tweet.id,
+                        'created_at': tweet.created_at,
+                        'text': tweet.full_text,
+                    }
+                )
                 if limit and len(timeline['tweets']) >= limit:
                     break
                 tweet = cursor.next()

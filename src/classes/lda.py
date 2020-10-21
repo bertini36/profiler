@@ -19,7 +19,6 @@ with warnings.catch_warnings():
 
 
 class Sentences:
-
     def __init__(self, texts):
         self.texts = texts
 
@@ -29,10 +28,13 @@ class Sentences:
 
 
 class LDA:
-
     def __init__(
-        self, storage_backend, n_topics=5,
-        n_passes=200, use_bigrams=False, min_df=50
+        self,
+        storage_backend,
+        n_topics=5,
+        n_passes=200,
+        use_bigrams=False,
+        min_df=50,
     ):
         logger.info(
             f'Latent Dirichlet Allocation with n_topics={n_topics}, '
@@ -55,11 +57,14 @@ class LDA:
         """
         logger.info(f'Run LDA for {user} timeline')
         with self._storage_backend as backend:
-            timeline = self.__class__.get_timeline(user, backend)
-            exec_key = self.get_execution_key(user)
-            model = self.infer_model(timeline, exec_key, verbose)
-            if model and save:
-                self.save_model(model, timeline)
+            try:
+                timeline = self.__class__.get_timeline(user, backend)
+                exec_key = self.get_execution_key(user)
+                model = self.infer_model(timeline, exec_key, verbose)
+                if model and save:
+                    self.save_model(model, timeline)
+            except Exception as e:
+                logger.error(e)
 
     @staticmethod
     def get_timeline(user: str, backend):
@@ -108,8 +113,7 @@ class LDA:
 
     def prepare_data(self, timeline: dict) -> (list, corpora.Dictionary):
         df = pd.DataFrame(
-            timeline['cleaned_tweets'],
-            columns=['id', 'created_at', 'text']
+            timeline['cleaned_tweets'], columns=['id', 'created_at', 'text']
         )
         logger.info(f'Preparing data for LDA...({df.shape[0]} tweets)')
         texts = Sentences([text.split() for text in list(df['text'])])
@@ -133,21 +137,23 @@ class LDA:
     def print_terms(self, model: LdaMulticore):
         topics = []
         for topic in model.print_topics(num_topics=self.n_topics, num_words=10):
-            topics.append([
-                (s.split('*\"')[1].split('\"')[0], float(s.split('*\"')[0]))
-                for s in str(topic[1]).split('+ ')
-            ])
+            topics.append(
+                [
+                    (s.split('*\"')[1].split('\"')[0], float(s.split('*\"')[0]))
+                    for s in str(topic[1]).split('+ ')
+                ]
+            )
         pprint(topics)
 
     def generate_html(
-        self, model: LdaMulticore, bow: list,
-        dictionary: corpora.Dictionary, user: str
+        self,
+        model: LdaMulticore,
+        bow: list,
+        dictionary: corpora.Dictionary,
+        user: str,
     ):
         data = pyLDAvis.gensim.prepare(model, bow, dictionary)
-        pyLDAvis.save_html(
-            data,
-            f'../output/{self.get_execution_key(user)}.html'
-        )
+        pyLDAvis.save_html(data, f'output/{self.get_execution_key(user)}.html')
 
     def save_model(self, model: LdaMulticore, timeline: dict):
         logger.info(f'Saving lda model at {self._storage_backend}')

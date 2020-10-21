@@ -7,7 +7,6 @@ from src.classes.preprocessors import MyPreprocessor
 
 @pytest.mark.unit
 class TestMyPreprocessor:
-
     @classmethod
     def setup_class(cls):
         cls.preprocessor = MyPreprocessor(None)

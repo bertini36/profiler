@@ -9,7 +9,6 @@ from .exceptions import DatabaseDoesNotExist
 
 
 class Backend(ABC):
-
     def __repr__(self):
         return self.name
 
@@ -63,10 +62,12 @@ class Backend(ABC):
 
 
 class MongoBackend(Backend):
-
     def __init__(
-        self, mongo_url: str, mongo_port: str,
-        db_name: str, use_existing_db: bool = True
+        self,
+        mongo_url: str,
+        mongo_port: str,
+        db_name: str,
+        use_existing_db: bool = True,
     ):
         self.url = mongo_url
         self.port = mongo_port

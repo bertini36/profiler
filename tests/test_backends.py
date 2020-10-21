@@ -11,14 +11,10 @@ from src.settings import MONGO_DB, MONGO_PORT, MONGO_URL, USE_EXISTING_DATABASE
 
 @pytest.mark.unit
 class TestMongoBackend:
-
     @classmethod
     def setup_class(cls):
         cls.backend = MongoBackend(
-            MONGO_URL,
-            MONGO_PORT,
-            MONGO_DB,
-            USE_EXISTING_DATABASE
+            MONGO_URL, MONGO_PORT, MONGO_DB, USE_EXISTING_DATABASE
         )
         cls.backend.client = pymongo.MongoClient(MONGO_URL, MONGO_PORT)
 

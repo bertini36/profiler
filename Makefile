@@ -1,41 +1,60 @@
-DOCKER_COMPOSE = docker-compose -f docker-compose.yml
-DRUN = $(DOCKER_COMPOSE) run --rm
-PROFILER = $(DRUN) -w /code/ --entrypoint "python src/profiler.py" profiler
+all: build
 
-build:
-	$(DOCKER_COMPOSE) build
+include .env
+$(eval export $(shell sed -ne 's/ *#.*$//; /./ s/=.*$$// p' .env))
 
-up:
-	$(DOCKER_COMPOSE) up
+PROFILER = docker-compose run --rm -w /code/ --entrypoint "python src/profiler.py" profiler
 
-down:
-	$(DOCKER_COMPOSE) down
+service = profiler
 
-run_mongo:
-	$(DRUN) mongodb
+.PHONY: build
+build: ## build app
+	@echo "📦 Building app"
+	@docker-compose build --no-cache $(service)
 
-mongo_shell:
-	$(DOCKER_COMPOSE) exec mongodb mongo
+run: ## run get-timelines, clean-timelines and find-topics
+	$(PROFILER) run_all $(timelines) $(topics)
 
-get_timelines:
+get-timelines: ## download timelines
 	$(PROFILER) get_timelines $(timelines)
 
-clean_timelines:
+clean-timelines: ## timelines preprocessing
 	$(PROFILER) clean_timelines $(timelines)
 
-find_topics:
-	$(PROFILER) find_topics $(timelines) $(n_topics)
+find-topics: ## find topics using LDA
+	$(PROFILER) find_topics $(timelines) $(topics)
 
-run_all:
-	$(PROFILER) run_all $(timelines) $(n_topics)
+serve: ## run app
+	@echo "🛫 Serving app"
+	docker-compose up $(service)
 
-run_lint:
-	echo "==> Sorting Python imports..."
-	$(DRUN) --entrypoint "isort --recursive --apply src tests" tests
-	echo "==> Linting..."
-	$(DRUN) --entrypoint "pylint src tests" tests
+down: ## shut down app
+	@echo "🔌 Disconnecting"
+	@docker-compose down
 
-run_tests:
-	$(DRUN) --entrypoint "pytest --cov-report term --cov=src/" tests
-	$(DRUN) --entrypoint "py3clean ." tests
-	$(DRUN) --entrypoint "rm -rf .pytest_cache/" tests
+restart: ## restart a container
+	@echo "↩️ Restarting"
+	@docker-compose restart $(service)
+
+connect: ## connect to a container
+	@echo "🔞 Connecting to container"
+	@docker-compose run $(service) /bin/bash
+
+log: ## show container logs
+	@echo "📋 Showing logs"
+	@docker-compose logs -f --tail 100 $(service)
+
+update-deps: ## update requirements files with last packages versions
+	@echo "📥 Updating dependencies"
+	@docker-compose run --rm --entrypoint sh profiler -c "pip-compile /code/requirements/dev.in --upgrade"
+
+lint: ## lint code
+	@echo "🔦 Linting code"
+	@docker-compose run --rm --entrypoint sh profiler -c "black /code/ -t py38 --line-length 80 --skip-string-normalization"
+
+test: ## run tests
+	@echo "🏃‍ Running tests"
+	@docker-compose run --rm --entrypoint sh profiler -c "cd /code/ && py.test tests --cov=src $(args)"
+
+help: ## show make targets
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {sub("\\\\n",sprintf("\n%22c"," "), $$2);printf " \033[36m%-20s\033[0m  %s\n", $$1, $$2}' $(MAKEFILE_LIST)

@@ -6,7 +6,6 @@ from loguru import logger
 
 
 def timeit(func):
-
     def wrapper(*args, **kwargs):
         t1 = time.time()
         result = func(*args, **kwargs)

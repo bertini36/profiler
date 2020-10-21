@@ -12,10 +12,12 @@ from src.settings import (
 
 
 class Tweet:
-
     def __init__(
-        self, retweeted: bool, full_text: str,
-        id: str = '', created_at: str = ''
+        self,
+        retweeted: bool,
+        full_text: str,
+        id: str = '',
+        created_at: str = '',
     ):
         self.retweeted = retweeted
         self.full_text = full_text
@@ -25,14 +27,13 @@ class Tweet:
 
 @pytest.mark.unit
 class TestTweepyProvider:
-
     @classmethod
     def setup_class(cls):
         cls.provider = TweepyProvider(
             TWITTER_PUBLIC_KEY,
             TWITTER_SECRET_KEY,
             TWITTER_ACCESS_TOKEN,
-            TWITTER_SECRET_TOKEN
+            TWITTER_SECRET_TOKEN,
         )
         cls.provider.__enter__()
 

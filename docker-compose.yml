@@ -4,8 +4,7 @@ services:
   profiler:
     build:
       context: .
-      args:
-        REQUIREMENTS: requirements/requirements.txt
+    container_name: "profiler-container"
     env_file: .env
     volumes:
       - ".:/code"
@@ -14,22 +13,9 @@ services:
 
   mongodb:
     image: mongo:latest
-    restart: always
-    container_name: "mongodb"
-    env_file: .env
+    container_name: "mongodb-container"
+    hostname: mongodb
     environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
-    volumes:
-      - "/opt/classes/data/db:/data/db"
+      MONGO_INITDB_DATABASE: profiler_db
     ports:
-      - 27017:27017
-    command: mongod --smallfiles
-
-  tests:
-   build:
-     context: .
-     args:
-       REQUIREMENTS: requirements/requirements-test.txt
-   volumes:
-     - ".:/code"
+      - "27017:27017"

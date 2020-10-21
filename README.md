@@ -1,97 +1,48 @@
 # Profiler
-[![Build Status](https://api.travis-ci.org/bertini36/profiler.svg?branch=master)](https://travis-ci.org/bertini36/profiler)
-[![codecov](https://codecov.io/gh/bertini36/profiler/branch/master/graph/badge.svg)](https://codecov.io/gh/bertini36/profiler)
+[![Build Status](https://travis-ci.org/bertini36/profiler.svg?branch=master)](https://travis-ci.org/bertini36/profiler)
+[![Requirements Status](https://requires.io/github/bertini36/profiler/requirements.svg?branch=master)](https://requires.io/github/bertini36/profiler/requirements/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/bertini36/profiler/badge.svg?branch=master)](https://coveralls.io/github/bertini36/profiler?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Profiler tries to identify main topics in personal Twitter timelines using 
+<h3 align="center">
+    bertini36/profiler 📖
+</h3>
+<p align="center">
+  <a href="#-environment-setup" target="_blank">
+    Installation
+  </a>&nbsp;&nbsp;•&nbsp;
+  <a href="https://github.com/bertini36/profiler/blob/master/Makefile" target="_blank">
+    Commands
+  </a>&nbsp;&nbsp;•&nbsp;
+  <a href="https://github.com/bertini36/profiler/blob/master/src/settings.py" target="_blank">
+    Algorithm settings
+  </a>
+</p>
+<p align="center">
+Profiler tries to identify main topics in personal Twitter timelines using
 <a href="http://www.jmlr.org/papers/volume3/blei03a/blei03a.pdf">LDA
  topic models algorithm</a> in a easy way for simple exploratory purposes
- 
-## Prerequisites
+</p>
 
-If you don’t have Docker installed, follow the instructions for your OS:
+## ⚙️ Environment Setup
 
-- On Mac OS X, you’ll need [Docker for Mac](https://docs.docker.com/docker-for-mac/)
-- On Windows, you’ll need [Docker for Windows](https://docs.docker.com/docker-for-windows/)
-- On Linux, you’ll need [docker-engine](https://docs.docker.com/engine/installation/)
+### 🐳 Required tools
 
-And aditionally install [Docker compose](https://docs.docker.com/compose/install/)
+1. [Install Docker and Docker Compose](https://www.docker.com/get-started)
+2. Clone this project: `git clone https://github.com/bertini36/profiler`
+3. Move to the project folder: `profiler`
 
-## Usage
+### 🚀 Usage
 
-### Basic usage
+1. Install all the dependencies and bring up the project with Docker executing: `make build`
+2. `cp .env-sample .env`
+3. Add your Twitter keys at `.env`
+4. If you require it, customize some algorithm technical configs at `src/settings.py`
+5. Run an inference: `make run timelines=pablocasado_ topics=3`
+6. ☕
+7. HTML outputs will be generated at `output` folder. Open them with your navigator
 
-**Build environment**
-```bash
-make build
-```
-
-**Run environment**
-```bash
-make up
-```
-
-**Stop environment**
-```bash
-make down
-```
-
-### Configurations
-Set Mongo configs and Twitter API keys in `.env` file using `.env-sample` file
-```bash
-cp .env-sample .env
-vim .env
-```
-
-**Download timeline, clean tweets and find topics**
-
-Make commands
-```bash
-make get_timelines timelines=Albert_Rivera,sanchezcastejon
-make clean_timelines timelines=Albert_Rivera,sanchezcastejon
-make find_topics timelines=Albert_Rivera,sanchezcastejon n_topics=5
-```
-Run all steps:
-```bash
-make run_all timelines=Albert_Rivera,sanchezcastejon n_topics=5
-```
-
-Python
-```python
-from src.profiler import Profiler
-
-Profiler.get_timelines(users='Pablo_Iglesias_,pablocasado_')
-Profiler.clean_timelines(users='Pablo_Iglesias_,pablocasado_')
-Profiler.find_topics(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
-```
-Run all with the same command:
-```python
-Profiler.run_all(users='Pablo_Iglesias_,pablocasado_', n_topics=5)
-```
-
-And now you have time to take a coffe ☕️️️☕️☕️️️
-
-### Algorithm configs
-
-You can customize some algorithm technical configs at `src/settings.py`
-
-## Development
-
-To work with this codebase you'll need to clone the repository and build the docker image:
-
-```bash
-git clone git@github.com:bertini36/profiler
-cd profiler
-make build
-```
-
-To run tests and lint code run the following scripts:
-
-```bash
-make run_tests
-make run_lint
-```
-
-### Results screenshot
+### 📈 Results screenshot
 
 <p align="center"><img src="https://github.com/bertini36/profiler/blob/master/img/photo.png"/></p>
 

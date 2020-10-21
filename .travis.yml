@@ -1,16 +1,13 @@
 dist: xenial
-sudo: true
-services:
-  - docker
+
 language: python
+
 python:
-  - "3.7"
-before_install:
-  - touch .env
-  - docker-compose build tests
-script:
-  - make run_tests
-env:
-  - CODECOV_TOKEN=fc95eb88-890b-4473-b8cd-6d10d9c99c38
+  - 3.8
+
+install: pip install -r requirements.txt
+
+script: py.test tests --cov=src
+
 after_success:
-  - codecov
+  - coveralls

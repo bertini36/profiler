@@ -1,0 +1,12 @@
+environs
+fire
+loguru
+pymongo
+tweepy
+pandas
+gensim
+nltk
+stop-words
+langdetect
+pyLDAvis
+git+git://github.com/psf/black

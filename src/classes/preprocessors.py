@@ -40,7 +40,15 @@ CURRENCY_REGEX = re.compile(
     f'({"|".join(re.escape(c) for c in CURRENCIES.keys())})+'
 )
 PUNCTUATION = list(string.punctuation) + [
-    '?', '¿', '¡', '!', '-', '->', '<-', '→', '—',
+    '?',
+    '¿',
+    '¡',
+    '!',
+    '-',
+    '->',
+    '<-',
+    '→',
+    '—',
 ]
 PUNCTUATION.remove('<')
 PUNCTUATION.remove('>')
@@ -70,7 +78,8 @@ NONBREAKING_SPACE_REGEX = re.compile(r'(?!\n)\s+')
 URL_REGEX = re.compile(
     r'(?:^|(?<![\w\/\.]))'
     r'(?:(?:https?:\/\/|ftp:\/\/|www\d{0,3}\.))'
-    r'(?:\S+(?::\S*)?@)?' r'(?:'
+    r'(?:\S+(?::\S*)?@)?'
+    r'(?:'
     r'(?!(?:10|127)(?:\.\d{1,3}){3})'
     r'(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})'
     r'(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})'
@@ -80,62 +89,97 @@ URL_REGEX = re.compile(
     r'|'
     r'(?:(?:[a-z\\u00a1-\\uffff0-9]-?)*[a-z\\u00a1-\\uffff0-9]+)'
     r'(?:\.(?:[a-z\\u00a1-\\uffff0-9]-?)*[a-z\\u00a1-\\uffff0-9]+)*'
-    r'(?:\.(?:[a-z\\u00a1-\\uffff]{2,}))' r')'
+    r'(?:\.(?:[a-z\\u00a1-\\uffff]{2,}))'
+    r')'
     r'(?::\d{2,5})?'
     r'(?:\/[^\)\]\}\s]*)?',
     flags=re.UNICODE | re.IGNORECASE,
 )
 
 strange_double_quotes = [
-    '«', '‹', '»', '›', '„', '“', '‟', '”',
-    '❝', '❞', '❮', '❯', '〝', '〞', '〟', '＂',
+    '«',
+    '‹',
+    '»',
+    '›',
+    '„',
+    '“',
+    '‟',
+    '”',
+    '❝',
+    '❞',
+    '❮',
+    '❯',
+    '〝',
+    '〞',
+    '〟',
+    '＂',
 ]
 strange_single_quotes = ['‘', '‛', '’', '❛', '❜', '`', '´', '‘', '’']
 DOUBLE_QUOTE_REGEX = re.compile('|'.join(strange_double_quotes))
 SINGLE_QUOTE_REGEX = re.compile('|'.join(strange_single_quotes))
 
 with open('/code/src/classes/emojis.txt') as f:
-    EMOJIS_REGEX = re.compile(
-        ''.join(f.readlines()).strip()
-    )
+    EMOJIS_REGEX = re.compile(''.join(f.readlines()).strip())
 
 
 class Preprocessor(ABC):
-
     @abstractmethod
     def run(
-        self, user: str, save: bool = True, replace_mentions: bool = True,
-        filter_mentions: bool = True, replace_emails: bool = True,
-        filter_emails: bool = True, replace_currencies: bool = True,
-        filter_currencies: bool = True, replace_urls: bool = True,
-        filter_urls: bool = True, replace_numbers: bool = True,
-        filter_numbers: bool = True, replace_digits: bool = True,
-        filter_digits: bool = True, replace_emojis: bool = True,
-        filter_emojis: bool = True, remove_punct: bool = True,
-        remove_multiple_spaces: bool = True, to_lower: bool = True,
-        filter_stopwords: bool = True, filter_empty_rows: bool = True
+        self,
+        user: str,
+        save: bool = True,
+        replace_mentions: bool = True,
+        filter_mentions: bool = True,
+        replace_emails: bool = True,
+        filter_emails: bool = True,
+        replace_currencies: bool = True,
+        filter_currencies: bool = True,
+        replace_urls: bool = True,
+        filter_urls: bool = True,
+        replace_numbers: bool = True,
+        filter_numbers: bool = True,
+        replace_digits: bool = True,
+        filter_digits: bool = True,
+        replace_emojis: bool = True,
+        filter_emojis: bool = True,
+        remove_punct: bool = True,
+        remove_multiple_spaces: bool = True,
+        to_lower: bool = True,
+        filter_stopwords: bool = True,
+        filter_empty_rows: bool = True,
     ) -> dict:
         pass
 
 
 class MyPreprocessor(Preprocessor):
-
     def __init__(self, storage_backend):
         self._storage_backend = storage_backend
         nltk.download('stopwords')
 
     @timeit
     def run(
-        self, user: str, save: bool = True, replace_mentions: bool = True,
-        filter_mentions: bool = True, replace_emails: bool = True,
-        filter_emails: bool = True, replace_currencies: bool = True,
-        filter_currencies: bool = True, replace_urls: bool = True,
-        filter_urls: bool = True, replace_numbers: bool = True,
-        filter_numbers: bool = True, replace_digits: bool = True,
-        filter_digits: bool = True, replace_emojis: bool = True,
-        filter_emojis: bool = True, remove_punct: bool = True,
-        remove_multiple_spaces: bool = True, to_lower: bool = True,
-        filter_stopwords: bool = True, filter_empty_rows: bool = True
+        self,
+        user: str,
+        save: bool = True,
+        replace_mentions: bool = True,
+        filter_mentions: bool = True,
+        replace_emails: bool = True,
+        filter_emails: bool = True,
+        replace_currencies: bool = True,
+        filter_currencies: bool = True,
+        replace_urls: bool = True,
+        filter_urls: bool = True,
+        replace_numbers: bool = True,
+        filter_numbers: bool = True,
+        replace_digits: bool = True,
+        filter_digits: bool = True,
+        replace_emojis: bool = True,
+        filter_emojis: bool = True,
+        remove_punct: bool = True,
+        remove_multiple_spaces: bool = True,
+        to_lower: bool = True,
+        filter_stopwords: bool = True,
+        filter_empty_rows: bool = True,
     ) -> dict:
         """
         This function gets a timeline from storage backend and
@@ -164,94 +208,105 @@ class MyPreprocessor(Preprocessor):
         """
         logger.info(f'Preprocessing {user} timeline')
         with self._storage_backend as backend:
-            timeline = backend.get_timeline(user)
-            if not timeline:
-                raise TimelineDoesNotExist(
-                    f'There is no timeline for {user} saved in '
-                    f'{backend}. Please first, download it'
+            try:
+                timeline = backend.get_timeline(user)
+                if not timeline:
+                    raise TimelineDoesNotExist(
+                        f'There is no timeline for {user} saved in '
+                        f'{backend}. Please first, download it'
+                    )
+                cleaned_timeline = self.clean_timeline(
+                    timeline,
+                    replace_mentions=replace_mentions,
+                    filter_mentions=filter_mentions,
+                    replace_emails=replace_emails,
+                    filter_emails=replace_emails,
+                    replace_currencies=replace_currencies,
+                    filter_currencies=filter_currencies,
+                    replace_urls=replace_urls,
+                    filter_urls=filter_urls,
+                    replace_numbers=replace_numbers,
+                    filter_numbers=filter_numbers,
+                    replace_digits=replace_digits,
+                    filter_digits=filter_digits,
+                    replace_emojis=replace_emojis,
+                    filter_emojis=filter_emojis,
+                    remove_punct=remove_punct,
+                    remove_multiple_spaces=remove_multiple_spaces,
+                    to_lower=to_lower,
+                    filter_stopwords=filter_stopwords,
+                    filter_empty_rows=filter_empty_rows,
                 )
-            cleaned_timeline = self.clean_timeline(
-                timeline,
-                replace_mentions=replace_mentions,
-                filter_mentions=filter_mentions,
-                replace_emails=replace_emails,
-                filter_emails=replace_emails,
-                replace_currencies=replace_currencies,
-                filter_currencies=filter_currencies,
-                replace_urls=replace_urls,
-                filter_urls=filter_urls,
-                replace_numbers=replace_numbers,
-                filter_numbers=filter_numbers,
-                replace_digits=replace_digits,
-                filter_digits=filter_digits,
-                replace_emojis=replace_emojis,
-                filter_emojis=filter_emojis,
-                remove_punct=remove_punct,
-                remove_multiple_spaces=remove_multiple_spaces,
-                to_lower=to_lower,
-                filter_stopwords=filter_stopwords,
-                filter_empty_rows=filter_empty_rows
-            )
-            if save:
-                backend.update_timeline(user, cleaned_timeline)
+                if save:
+                    backend.update_timeline(user, cleaned_timeline)
+            except Exception as e:
+                logger.error(e)
         return cleaned_timeline
 
     @staticmethod
     def clean_timeline(
-        timeline: dict, replace_mentions: bool = True,
-        filter_mentions: bool = True, replace_emails: bool = True,
-        filter_emails: bool = True, replace_currencies: bool = True,
-        filter_currencies: bool = True, replace_urls: bool = True,
-        filter_urls: bool = True, replace_numbers: bool = True,
-        filter_numbers: bool = True, replace_digits: bool = True,
-        filter_digits: bool = True, replace_emojis: bool = True,
-        filter_emojis: bool = True, remove_punct: bool = True,
-        remove_multiple_spaces: bool = True, to_lower: bool = True,
-        filter_stopwords: bool = True, filter_empty_rows: bool = True
+        timeline: dict,
+        replace_mentions: bool = True,
+        filter_mentions: bool = True,
+        replace_emails: bool = True,
+        filter_emails: bool = True,
+        replace_currencies: bool = True,
+        filter_currencies: bool = True,
+        replace_urls: bool = True,
+        filter_urls: bool = True,
+        replace_numbers: bool = True,
+        filter_numbers: bool = True,
+        replace_digits: bool = True,
+        filter_digits: bool = True,
+        replace_emojis: bool = True,
+        filter_emojis: bool = True,
+        remove_punct: bool = True,
+        remove_multiple_spaces: bool = True,
+        to_lower: bool = True,
+        filter_stopwords: bool = True,
+        filter_empty_rows: bool = True,
     ) -> dict:
         """
         This function will do all text
         transformations for each tweet in timeline
         """
         df = pd.DataFrame(
-            timeline['tweets'],
-            columns=['id', 'created_at', 'text']
+            timeline['tweets'], columns=['id', 'created_at', 'text']
         )
         logger.info(f'Preprocessing {df.shape[0]} tweets of {timeline["user"]}')
         if replace_mentions:
             df['text'] = df['text'].apply(
                 MyPreprocessor.replace_mentions,
-                args=('',) if filter_mentions else None
+                args=('',) if filter_mentions else None,
             )
         if replace_emails:
             df['text'] = df['text'].apply(
                 MyPreprocessor.replace_emails,
-                args=('',) if filter_emails else None
+                args=('',) if filter_emails else None,
             )
         if replace_currencies:
             df['text'] = df['text'].apply(
                 MyPreprocessor.replace_currencies,
-                args=('',) if filter_currencies else None
+                args=('',) if filter_currencies else None,
             )
         if replace_urls:
             df['text'] = df['text'].apply(
-                MyPreprocessor.replace_urls,
-                args=('',) if filter_urls else None
+                MyPreprocessor.replace_urls, args=('',) if filter_urls else None
             )
         if replace_numbers:
             df['text'] = df['text'].apply(
                 MyPreprocessor.replace_numbers,
-                args=('',) if filter_numbers else None
+                args=('',) if filter_numbers else None,
             )
         if replace_digits:
             df['text'] = df['text'].apply(
                 MyPreprocessor.replace_digits,
-                args=('',) if filter_digits else None
+                args=('',) if filter_digits else None,
             )
         if replace_emojis:
             df['text'] = df['text'].apply(
                 MyPreprocessor.replace_emojis,
-                args=('',) if filter_emojis else None
+                args=('',) if filter_emojis else None,
             )
         if remove_punct:
             df['text'] = df['text'].apply(MyPreprocessor.remove_punct)
@@ -267,10 +322,11 @@ class MyPreprocessor(Preprocessor):
             logger.info(
                 f'There are {df.shape[0]} not null tweets of {timeline["user"]}'
             )
+
         return {
             'user': timeline['user'],
             'tweets': timeline['tweets'],
-            'cleaned_tweets': list(df.T.to_dict().values())
+            'cleaned_tweets': list(df.T.to_dict().values()),
         }
 
     @staticmethod

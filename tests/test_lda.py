@@ -11,45 +11,23 @@ from src.settings import MONGO_DB, MONGO_PORT, MONGO_URL, USE_EXISTING_DATABASE
 
 @pytest.mark.unit
 class TestLDA:
-
     @classmethod
     def setup_class(cls):
         cls.backend = MongoBackend(
-            MONGO_URL,
-            MONGO_PORT,
-            MONGO_DB,
-            USE_EXISTING_DATABASE
+            MONGO_URL, MONGO_PORT, MONGO_DB, USE_EXISTING_DATABASE
         )
         cls.lda = LDA(cls.backend)
         cls.timeline = {
             'user': '@test',
             'tweets': [
-                {
-                    'id': 1,
-                    'created_at': '',
-                    'text': 'Ouh mama'
-                },
-                {
-                    'id': 2,
-                    'created_at': '',
-                    'text': 'Ey yo'
-                }
+                {'id': 1, 'created_at': '', 'text': 'Ouh mama'},
+                {'id': 2, 'created_at': '', 'text': 'Ey yo'},
             ],
             'cleaned_tweets': [
-                {
-                    'id': 1,
-                    'created_at': '',
-                    'text': 'ouh mama'
-                },
-                {
-                    'id': 2,
-                    'created_at': '',
-                    'text': 'ey yo'
-                }
+                {'id': 1, 'created_at': '', 'text': 'ouh mama'},
+                {'id': 2, 'created_at': '', 'text': 'ey yo'},
             ],
-            'models': {
-                '111': None
-            }
+            'models': {'111': None},
         }
 
     @patch('src.classes.backends.MongoBackend.get_timeline')
@@ -70,8 +48,12 @@ class TestLDA:
     @patch('src.classes.lda.LDA.prepare_data')
     @patch('src.classes.lda.LDA.model_is_already_inferred')
     def test_infer_model_already_inferred(
-        self, already_inferred_mock, prepare_data_mock,
-        logger_mock, pickle_mock, generate_html_mock
+        self,
+        already_inferred_mock,
+        prepare_data_mock,
+        logger_mock,
+        pickle_mock,
+        generate_html_mock,
     ):
         prepare_data_mock.return_value = None, None
         already_inferred_mock.return_value = True
@@ -88,8 +70,13 @@ class TestLDA:
     @patch('src.classes.lda.LDA.prepare_data')
     @patch('src.classes.lda.LDA.model_is_already_inferred')
     def test_infer_model_already_inferred_verbose(
-        self, already_inferred_mock, prepare_data_mock,
-        logger_mock, pickle_mock, generate_html_mock, print_terms_mock
+        self,
+        already_inferred_mock,
+        prepare_data_mock,
+        logger_mock,
+        pickle_mock,
+        generate_html_mock,
+        print_terms_mock,
     ):
         prepare_data_mock.return_value = None, None
         already_inferred_mock.return_value = True
@@ -107,8 +94,13 @@ class TestLDA:
     @patch('src.classes.lda.LDA.prepare_data')
     @patch('src.classes.lda.LDA.model_is_already_inferred')
     def test_infer_model(
-        self, already_inferred_mock, prepare_data_mock, logger_mock,
-        generate_html_mock, print_terms_mock, lda_mock
+        self,
+        already_inferred_mock,
+        prepare_data_mock,
+        logger_mock,
+        generate_html_mock,
+        print_terms_mock,
+        lda_mock,
     ):
         prepare_data_mock.return_value = None, None
         already_inferred_mock.return_value = False

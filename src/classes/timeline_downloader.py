@@ -4,7 +4,6 @@ from loguru import logger
 
 
 class TimelineDownloader:
-
     def __init__(self, provider, storage_backend):
         self._provider = provider
         self._storage_backend = storage_backend
@@ -14,8 +13,11 @@ class TimelineDownloader:
             backend.insert_timeline(timeline)
 
     def get_timeline(
-        self, user: str, limit: int = None,
-        save: bool = False, filter_rts: bool = False
+        self,
+        user: str,
+        limit: int = None,
+        save: bool = False,
+        filter_rts: bool = False,
     ):
         """
         Download user tweets ignoring retweets
@@ -26,14 +28,17 @@ class TimelineDownloader:
         """
         logger.info(f'Downloading tweets using {self._provider}')
         with self._storage_backend as backend:
-            if backend.exists_timeline(user):
-                logger.info(
-                    f'Timeline already downloaded and saved in {backend}'
-                )
-            else:
-                with self._provider as provider:
-                    timeline = provider.download_timeline(
-                        user, limit, filter_rts=filter_rts
+            try:
+                if backend.exists_timeline(user):
+                    logger.info(
+                        f'Timeline already downloaded and saved in {backend}'
                     )
-                    if save:
-                        self.save_timeline(timeline)
+                else:
+                    with self._provider as provider:
+                        timeline = provider.download_timeline(
+                            user, limit, filter_rts=filter_rts
+                        )
+                        if save:
+                            self.save_timeline(timeline)
+            except Exception as e:
+                logger.error(e)

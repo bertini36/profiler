@@ -1,8 +1,0 @@
-.dockerignore
-.editorconfig
-.env
-.gitignore
-docker-compose.dev.yml
-Dockerfile
-Makefile
-README.md

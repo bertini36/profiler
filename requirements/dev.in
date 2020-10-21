@@ -1,0 +1,7 @@
+-r base.in
+
+pip-tools
+pytest
+pylint
+pytest-cov
+mock

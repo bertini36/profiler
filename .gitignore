@@ -1,26 +1,15 @@
-# Sublime
-*.tmlanguage.cache
-*.tmPreferences.cache
-*.stTheme.cache
-*.sublime-workspace
-*.sublime-project
-
-# Basics
-*.py[cod]
-__pycache__
-
-# Logs
-*.log
-
-# Pycharm
-.idea
-
 # Confs
+.todo
 .env
 
-# Outputs
+# Python
+.direnv
+*.pyc
+__pycache__
+.pytest_cache
+.coverage
+
+# Others
+.docker
 output/*
 !output/.gitkeep
-
-# Coverage
-.coverage
