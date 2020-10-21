@@ -19,7 +19,7 @@ TWITTER_PUBLIC_KEY = env('TWITTER_PUBLIC_KEY', default='')
 TWITTER_SECRET_KEY = env('TWITTER_SECRET_KEY', default='')
 TWITTER_ACCESS_TOKEN = env('TWITTER_ACCESS_TOKEN', default='')
 TWITTER_SECRET_TOKEN = env('TWITTER_SECRET_TOKEN', default='')
-FILTER_RTS = False
+FILTER_RTS = True
 
 # PREPROCESSING
 # ******************************************************************************
@@ -35,7 +35,7 @@ REPLACE_NUMBERS = True
 FILTER_NUMBERS = True
 REPLACE_DIGITS = True
 FILTER_DIGITS = True
-REPLACE_EMOJIS = False
+REPLACE_EMOJIS = True
 FILTER_EMOJIS = True
 REMOVE_PUNCT = True
 REMOVE_MULTIPLE_SPACES = True
