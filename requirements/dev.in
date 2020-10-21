@@ -5,3 +5,4 @@ pytest
 pylint
 pytest-cov
 mock
+coveralls
