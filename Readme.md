@@ -16,6 +16,9 @@
   </a>&nbsp;&nbsp;•&nbsp;
   <a href="https://github.com/bertini36/profiler/blob/master/src/settings.py" target="_blank">
     Algorithm settings
+  </a>&nbsp;&nbsp;•&nbsp;
+  <a href="https://albertopou.dev/blog/profiling-on-social-networks" target="_blank">
+    Post
   </a>
 </p>
 <p align="center">
