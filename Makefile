@@ -57,4 +57,5 @@ test: ## run tests
 	@docker-compose run --rm --entrypoint sh profiler -c "cd /code/ && py.test tests --cov=src $(args)"
 
 help: ## show make targets
+	@echo "📖 Help"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {sub("\\\\n",sprintf("\n%22c"," "), $$2);printf " \033[36m%-20s\033[0m  %s\n", $$1, $$2}' $(MAKEFILE_LIST)

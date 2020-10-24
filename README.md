@@ -1,4 +1,3 @@
-# Profiler
 [![Build Status](https://travis-ci.org/bertini36/profiler.svg?branch=master)](https://travis-ci.org/bertini36/profiler)
 [![Requirements Status](https://requires.io/github/bertini36/profiler/requirements.svg?branch=master)](https://requires.io/github/bertini36/profiler/requirements/?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/bertini36/profiler/badge.svg?branch=master)](https://coveralls.io/github/bertini36/profiler?branch=master)
