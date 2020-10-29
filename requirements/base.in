@@ -9,4 +9,3 @@ nltk
 stop-words
 langdetect
 pyLDAvis
-git+git://github.com/psf/black

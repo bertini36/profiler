@@ -48,4 +48,5 @@ Profiler tries to identify main topics in personal Twitter timelines using
 
 <p align="center"><img src="https://github.com/bertini36/profiler/blob/master/img/photo.png"/></p>
 
+<br />
 <p align="center">&mdash; Built with :heart: from Mallorca &mdash;</p>

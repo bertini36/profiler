@@ -6,3 +6,4 @@ pylint
 pytest-cov
 mock
 coveralls
+git+git://github.com/psf/black
